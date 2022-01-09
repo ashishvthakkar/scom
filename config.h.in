@@ -1,0 +1,13 @@
+#ifndef SCOM_PATH_CONFIG_H_
+#define SCOM_PATH_CONFIG_H_
+
+#include <filesystem>
+
+// Prod config
+static constexpr int kProtocolVersion = 3;
+
+// Tests related config
+static const std::filesystem::path kTestDataDir =
+    R"(${CMAKE_SOURCE_DIR}/test_data)";
+
+#endif

@@ -10,18 +10,24 @@ set(CMAKE_CXX_CLANG_TIDY
         "--export-fixes=${CMAKE_BINARY_DIR}/clang-tidy.fixes")
 
 # kydeps based bootstrap
-set(KYDEPS gflags glog GTest)
+set(KYDEPS gflags glog GTest zlib protobuf)
 add_subdirectory(deps)
 find_package(gflags REQUIRED NO_MODULE)
 find_package(glog REQUIRED NO_MODULE)
 find_package(GTest REQUIRED NO_MODULE)
+find_package(zlib REQUIRED NO_MODULE)
+find_package(protobuf REQUIRED NO_MODULE)
 
 # Set up testing
 include(CTest)
 enable_testing()
 include(GoogleTest)
 
+configure_file(config.h.in ${CMAKE_BINARY_DIR}/include/config.h)
+
 add_subdirectory(tests)
+add_subdirectory(temp_path)
+add_subdirectory(protocol)
         
 add_executable(main main.cc)
 target_link_libraries(main 
