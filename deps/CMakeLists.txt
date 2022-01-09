@@ -52,22 +52,22 @@ KyDep(
 # set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 KyDep(
-    zlib
-    GIT_REPOSITORY https://github.com/kyotov/zlib.git
-    GIT_TAG 68cf39d20a32cf9659e62b10f95fccc0575b0b31 # kyotov-fix
+  zlib
+  GIT_REPOSITORY https://github.com/kyotov/zlib.git
+  GIT_TAG 68cf39d20a32cf9659e62b10f95fccc0575b0b31 # kyotov-fix
 
-    CMAKE_ARGS
-    -DAMD64=TRUE)
+  CMAKE_ARGS
+  -DAMD64=TRUE)
 
 KyDep(
-    protobuf
-    GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-    GIT_TAG 436bd7880e458532901c58f4d9d1ea23fa7edd52 # v3.15.8
+  protobuf
+  GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+  GIT_TAG 436bd7880e458532901c58f4d9d1ea23fa7edd52 # v3.15.8
 
-    SOURCE_SUBDIR cmake
+  SOURCE_SUBDIR cmake
 
-    CMAKE_ARGS
-    -Dprotobuf_BUILD_TESTS=OFF
-    -Dprotobuf_MSVC_STATIC_RUNTIME=ON
+  CMAKE_ARGS
+  -Dprotobuf_BUILD_TESTS=OFF
+  -Dprotobuf_MSVC_STATIC_RUNTIME=ON
 
-    ${DEPENDS_ON_zlib})
+  ${DEPENDS_ON_zlib})
