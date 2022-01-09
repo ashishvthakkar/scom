@@ -71,3 +71,25 @@ KyDep(
   -Dprotobuf_MSVC_STATIC_RUNTIME=ON
 
   ${DEPENDS_ON_zlib})
+
+set(OpenSSL_FIND_OVERRIDE [[find_package(OpenSSL REQUIRED)]])
+set(OpenSSL_DEPENDS_OVERRIDE zlib)
+    
+KyDep(
+  OpenSSL
+  GIT_REPOSITORY https://github.com/openssl/openssl.git
+  GIT_TAG fd78df59b0f656aefe96e39533130454aa957c00 # OpenSSL_1_1_1k
+
+  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ./config no-shared no-dso --prefix=<INSTALL_DIR> --openssldir=<INSTALL_DIR>
+  BUILD_COMMAND make -C <SOURCE_DIR> build_libs
+  INSTALL_COMMAND make -C <SOURCE_DIR> install_dev
+
+  ${DEPENDS_ON_zlib})
+
+KyDep(
+  libssh
+  GIT_REPOSITORY https://git.libssh.org/projects/libssh.git
+  GIT_TAG da6d026c125712d197479a7930b4efc117bfe7af # libssh-0.9.6
+
+  ${DEPENDS_ON_zlib}
+  ${DEPENDS_ON_OpenSSL})
