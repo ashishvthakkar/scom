@@ -1,0 +1,37 @@
+Checks: >
+  *,
+  -llvmlibc-*,
+  -fuchsia-*,
+  -modernize-use-trailing-return-type,
+  -altera-unroll-loops,
+  -altera-id-dependent-backward-branch,
+  -altera-struct-pack-align,
+  -misc-no-recursion,
+  -readability-magic-numbers,
+  -google-runtime-references,
+  -llvm-header-guard  
+  
+
+CheckOptions:
+  - { key: readability-identifier-naming.LocalVariableCase, value: lower_case }
+  - { key: readability-identifier-naming.FunctionCase, value: CamelCase }
+  - { key: readability-identifier-naming.PublicMemberCase, value: lower_case }
+  - { key: readability-identifier-naming.PublicMemberSuffix, value: "" }
+  - { key: readability-identifier-naming.MemberCase, value: lower_case }
+  - { key: readability-identifier-naming.MemberSuffix, value: "_" }
+  - { key: readability-identifier-naming.StaticConstantCase, value: CamelCase }
+  - { key: readability-identifier-naming.StaticConstantPrefix, value: "k" }
+  - { key: readability-identifier-naming.EnumConstantCase, value: CamelCase }
+  - { key: readability-identifier-naming.EnumConstantPrefix, value: "k" }
+
+WarningsAsErrors: "*"
+
+# Disabled readability-magic-numbers as it is considered dup with 
+#   cppcoreguidelines-avoid-magic-numbers 
+# Disabled google-runtime-references disabled as this seems to conflict with 
+#   the style guide (https://google.github.io/styleguide/cppguide.html) 
+#   which says (as of 12/19/2021):
+#     Non-optional input parameters should usually be values or const 
+#     references, while non-optional output and input/output parameters should 
+#     usually be references (which cannot be null)... Use non-const pointers 
+#     to represent optional outputs and optional input/output parameters. 
