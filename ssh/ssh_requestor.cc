@@ -49,7 +49,7 @@ int main() {
       buffer.at(nbytes) = '\0';
       LOG(INFO) << "Printing read data:";
       LOG(INFO) << buffer.data();
-      std::string addition_input("additional_input");
+      std::string addition_input("additional_input\n");
       channel.write(addition_input.data(), addition_input.size());
     }
   } catch (...) {
