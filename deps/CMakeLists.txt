@@ -71,9 +71,6 @@ KyDep(
   -Dprotobuf_MSVC_STATIC_RUNTIME=ON
 
   ${DEPENDS_ON_zlib})
-
-set(OpenSSL_FIND_OVERRIDE [[find_package(OpenSSL REQUIRED)]])
-set(OpenSSL_DEPENDS_OVERRIDE zlib)
     
 KyDep(
   OpenSSL

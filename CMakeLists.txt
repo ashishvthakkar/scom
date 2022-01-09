@@ -17,9 +17,7 @@ find_package(glog REQUIRED NO_MODULE)
 find_package(GTest REQUIRED NO_MODULE)
 find_package(zlib REQUIRED NO_MODULE)
 find_package(protobuf REQUIRED NO_MODULE)
-set(OpenSSL_FIND_OVERRIDE [[find_package(OpenSSL REQUIRED)]])
-set(OpenSSL_DEPENDS_OVERRIDE zlib)
-find_package(OpenSSL REQUIRED)
+find_package(OpenSSL REQUIRED) # Note lack of NO_MODULE
 find_package(libssh REQUIRED NO_MODULE)
 
 # Set up testing
