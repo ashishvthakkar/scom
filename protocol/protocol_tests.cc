@@ -26,7 +26,7 @@ TEST_F(ProtocolTests, BasicReadTest) {  // NOLINT
       std::ios::in | std::ios::binary);
   unsigned int version = 1;
   std::string details;
-  scom::ReadMessage(&version, &details, &test_file_in);
+  scom::ReadMessage(version, details, test_file_in);
   EXPECT_EQ(version, kProtocolVersion);
   LOG(INFO) << "Read details: " << details;
   EXPECT_EQ(0, details.compare("Test message"));
@@ -37,7 +37,7 @@ void WriteToFile(
     const std::string &details,
     const std::filesystem::path &path) {
   std::fstream out(path, std::ios::out | std::ios::trunc | std::ios::binary);
-  CHECK(scom::WriteMessage(version, details, &out))
+  CHECK(scom::WriteMessage(version, details, out))
       << "Could not write message to test file";
   out.flush();
 }
@@ -52,7 +52,7 @@ TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
   unsigned int version = 1;
   std::string details;
   std::fstream test_file_in(test_file_path, std::ios::in | std::ios::binary);
-  scom::ReadMessage(&version, &details, &test_file_in);
+  scom::ReadMessage(version, details, test_file_in);
   EXPECT_EQ(expected_version, version);
   LOG(INFO) << "Read details: " << details;
   EXPECT_EQ(0, details.compare(expected_details));
@@ -62,10 +62,10 @@ TEST_F(ProtocolTests, BasicStringWriteAndReadTest) {  // NOLINT
   const unsigned int expected_version = 5;
   const std::string expected_details = "Sample message";
   std::string str;
-  scom::WriteMessage(expected_version, expected_details, &str);
+  scom::WriteMessage(expected_version, expected_details, str);
   unsigned int version = 1;
   std::string details;
-  scom::ReadMessage(&version, &details, str);
+  scom::ReadMessage(version, details, str);
   EXPECT_EQ(expected_version, version);
   LOG(INFO) << "Read version: " << version;
   LOG(INFO) << "Read details: " << details;
