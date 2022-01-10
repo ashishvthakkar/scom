@@ -58,4 +58,18 @@ TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
   EXPECT_EQ(0, details.compare(expected_details));
 }
 
+TEST_F(ProtocolTests, BasicStringWriteAndReadTest) {  // NOLINT
+  const unsigned int expected_version = 5;
+  const std::string expected_details = "Sample message";
+  std::string str;
+  scom::WriteMessage(expected_version, expected_details, &str);
+  unsigned int version = 1;
+  std::string details;
+  scom::ReadMessage(&version, &details, str);
+  EXPECT_EQ(expected_version, version);
+  LOG(INFO) << "Read version: " << version;
+  LOG(INFO) << "Read details: " << details;
+  EXPECT_EQ(0, details.compare(expected_details));
+}
+
 }  // namespace scom
