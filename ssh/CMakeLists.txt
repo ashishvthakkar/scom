@@ -9,6 +9,7 @@ add_executable(ssh_demo
 target_link_libraries(ssh_demo
         PRIVATE glog::glog
         PRIVATE gflags
+        PRIVATE protocol
         PRIVATE ssh)
 
 add_executable(ssh_responder
@@ -16,4 +17,5 @@ add_executable(ssh_responder
 target_link_libraries(ssh_responder
         PRIVATE glog::glog
         PRIVATE gflags
+        PRIVATE protocol
         PRIVATE ssh)
