@@ -1,21 +1,31 @@
 #include <glog/logging.h>
 
 #include <array>
+#include <functional>
 #include <iostream>
 #include <libssh/libsshpp.hpp>
 
 // TODO(ashish): Convert to no except mode.
 class SshInitiator {
+private:
+  static const int kBufferSize = 1024;
+
 public:
+  using ChannelReadCallback = std::function<void(
+      const char * /*buffer*/,
+      int /*number of bytes read*/,
+      ssh::Channel & /*channel*/)>;
+
   SshInitiator(
       const std::string &host,
       const std::string &username,
-      const std::string &remote_command) {
+      const std::string &remote_command,
+      const ChannelReadCallback &read_callback) {
     ssh_init();
     auto session = ssh::Session();
     SshConnect(host, username, session);
     SshAuthenticate(session);
-    SshExecuteAtRemote(remote_command, session);
+    SshExecuteAtRemote(remote_command, read_callback, session);
   }
 
   ~SshInitiator() {
@@ -32,25 +42,24 @@ public:
 
   static void SshExecuteAtRemote(
       const std::string &remote_command,
+      const ChannelReadCallback &read_callback,
       ssh::Session &session) {
     auto channel = ssh::Channel(session);
     channel.openSession();
     channel.requestExec(remote_command.c_str());
 
-    const int buffer_size = 1024;
-    auto buffer = std::array<char, buffer_size>();
-
+    std::string buffer;
+    buffer.resize(kBufferSize);
     while (true) {
-      auto nbytes = channel.read(buffer.data(), buffer.size() - 1, -1);
-      LOG(INFO) << "Read " << nbytes << " bytes";
-      if (nbytes == 0) {
+      auto bytes_read = channel.read(buffer.data(), buffer.size() - 1, -1);
+      LOG(INFO) << "Read " << bytes_read << " bytes";
+      if (bytes_read == 0) {
         break;
       }
-      buffer.at(nbytes) = '\0';
+      buffer.at(bytes_read) = '\0';
       LOG(INFO) << "Printing read data:";
       LOG(INFO) << buffer.data();
-      std::string addition_input("additional_input\n");
-      channel.write(addition_input.data(), addition_input.size());
+      read_callback(buffer.data(), bytes_read, channel);
     }
   }
 
