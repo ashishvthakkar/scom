@@ -10,14 +10,14 @@ void InitProtobuf() { GOOGLE_PROTOBUF_VERIFY_VERSION; }
 bool WriteMessage(int version, const std::string &message, std::ostream &out) {
   scom::Header header;
   header.set_version(version);
-  header.set_details(message);
+  header.set_payload(message);
   return header.SerializeToOstream(&out);
 }
 
 bool WriteMessage(int version, const std::string &message, std::string &out) {
   scom::Header header;
   header.set_version(version);
-  header.set_details(message);
+  header.set_payload(message);
   return header.SerializeToString(&out);
 }
 
@@ -27,7 +27,7 @@ bool ReadMessage(int &version, std::string &message, std::istream &in) {
   if (!result)
     return result;
   version = header.version();
-  message = header.details();
+  message = header.payload();
   return true;
 }
 
@@ -37,7 +37,7 @@ bool ReadMessage(int &version, std::string &message, const std::string &in) {
   if (!result)
     return result;
   version = header.version();
-  message = header.details();
+  message = header.payload();
   return true;
 }
 

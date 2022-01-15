@@ -19,20 +19,7 @@ public:
   //  ~ProtocolTests() { scom::ShutdownProtobufLibrary(); }
 };
 
-TEST_F(ProtocolTests, BasicReadTest) {  // NOLINT
-  LOG(INFO) << "Using test dir: " << kTestDataDir;
-  std::fstream test_file_in(
-      kTestDataDir / "protobuf_test_data",
-      std::ios::in | std::ios::binary);
-  int version = 1;
-  std::string details;
-  scom::ReadMessage(version, details, test_file_in);
-  EXPECT_EQ(version, kProtocolVersion);
-  LOG(INFO) << "Read details: " << details;
-  EXPECT_EQ(0, details.compare("Test message"));
-}
-
-void WriteToFile(
+static void WriteToFile(
     const int version,
     const std::string &details,
     const std::filesystem::path &path) {
@@ -40,6 +27,25 @@ void WriteToFile(
   CHECK(scom::WriteMessage(version, details, out))
       << "Could not write message to test file";
   out.flush();
+}
+
+TEST_F(ProtocolTests, BasicReadTest) {  // NOLINT
+  LOG(INFO) << "Using test dir: " << kTestDataDir;
+  std::fstream test_file_in(
+      kTestDataDir / "protobuf_test_data",
+      std::ios::in | std::ios::binary);
+  int version = 1;
+  std::string details;
+  // Note: Use the below to update test file in case of a conscious change.
+  // std::string write_details("Test message");
+  // WriteToFile(
+  //     kProtocolVersion,
+  //     write_details,
+  //     kTestDataDir / "protobuf_test_data");
+  scom::ReadMessage(version, details, test_file_in);
+  EXPECT_EQ(version, kProtocolVersion);
+  LOG(INFO) << "Read details: " << details;
+  EXPECT_EQ(0, details.compare("Test message"));
 }
 
 TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
