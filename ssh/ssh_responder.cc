@@ -17,13 +17,15 @@ public:
     log_file_ << "Received input with size: " << input.size() << std::endl;
     log_file_ << "Received input: " << input << std::endl;
     int version = 0;
+    int request_id = 0;
     std::string details;
-    scom::ReadMessage(version, details, input);
+    scom::ReadMessage(input, version, request_id, details);
     CHECK(version == kProtocolVersion) << "Unexpected version: " << version;
     log_file_ << "Read message with version " << version
               << " and details: " << std::endl;
     log_file_ << details << std::endl;
-    auto protobuf_response = ConstructProtobufResponse(version, details);
+    auto protobuf_response =
+        ConstructProtobufResponse(version, request_id, details);
     std::cout << protobuf_response;
     log_file_ << "Sent protobuf response: " << protobuf_response << std::endl;
     // TODO(ashish): Add request id
@@ -39,10 +41,11 @@ private:
 
   std::string ConstructProtobufResponse(
       int version,
+      int request_id,
       const std::string& request_payload) {
     std::string response = ConstructResponse(request_payload);
     std::string protobuf_response;
-    scom::WriteMessage(version, response, protobuf_response);
+    scom::WriteMessage(version, request_id, response, protobuf_response);
     log_file_ << "Protobuf output: " << protobuf_response << std::endl;
     return protobuf_response;
   }

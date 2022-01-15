@@ -7,13 +7,29 @@ namespace scom {
 
 void InitProtobuf();
 
-bool WriteMessage(int version, const std::string &message, std::ostream &out);
+bool WriteMessage(
+    int version,
+    int request_id,
+    const std::string &payload,
+    std::ostream &out);
 
-bool WriteMessage(int version, const std::string &message, std::string &out);
+bool WriteMessage(
+    int version,
+    int request_id,
+    const std::string &payload,
+    std::string &out);
 
-bool ReadMessage(int &version, std::string &message, std::istream &in);
+bool ReadMessage(
+    std::istream &in,
+    int &version,
+    int &request_id,
+    std::string &payload);
 
-bool ReadMessage(int &version, std::string &message, const std::string &in);
+bool ReadMessage(
+    const std::string &in,
+    int &version,
+    int &request_id,
+    std::string &payload);
 
 void ShutdownProtobufLibrary();
 

@@ -21,10 +21,11 @@ public:
 
 static void WriteToFile(
     const int version,
+    const int request_id,
     const std::string &details,
     const std::filesystem::path &path) {
   std::fstream out(path, std::ios::out | std::ios::trunc | std::ios::binary);
-  CHECK(scom::WriteMessage(version, details, out))
+  CHECK(scom::WriteMessage(version, request_id, details, out))
       << "Could not write message to test file";
   out.flush();
 }
@@ -34,16 +35,19 @@ TEST_F(ProtocolTests, BasicReadTest) {  // NOLINT
   std::fstream test_file_in(
       kTestDataDir / "protobuf_test_data",
       std::ios::in | std::ios::binary);
-  int version = 1;
+  int version = 0;
+  int request_id = 0;
   std::string details;
   // Note: Use the below to update test file in case of a conscious change.
   // std::string write_details("Test message");
   // WriteToFile(
   //     kProtocolVersion,
+  //     1,
   //     write_details,
   //     kTestDataDir / "protobuf_test_data");
-  scom::ReadMessage(version, details, test_file_in);
+  scom::ReadMessage(test_file_in, version, request_id, details);
   EXPECT_EQ(version, kProtocolVersion);
+  EXPECT_EQ(1, request_id);
   LOG(INFO) << "Read details: " << details;
   EXPECT_EQ(0, details.compare("Test message"));
 }
@@ -53,26 +57,40 @@ TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
   LOG(INFO) << "Using temp path: " << temp.Path();
   std::filesystem::path test_file_path = temp.Path() / "test_data_file";
   const int expected_version = 4;
+  const int expected_request_id = 9;
   const std::string expected_details = "Sample message";
-  WriteToFile(expected_version, expected_details, test_file_path);
-  int version = 1;
+  WriteToFile(
+      expected_version,
+      expected_request_id,
+      expected_details,
+      test_file_path);
+  int version = 0;
+  int request_id = 0;
   std::string details;
   std::fstream test_file_in(test_file_path, std::ios::in | std::ios::binary);
-  scom::ReadMessage(version, details, test_file_in);
+  scom::ReadMessage(test_file_in, version, request_id, details);
   EXPECT_EQ(expected_version, version);
+  EXPECT_EQ(expected_request_id, request_id);
   LOG(INFO) << "Read details: " << details;
   EXPECT_EQ(0, details.compare(expected_details));
 }
 
 TEST_F(ProtocolTests, BasicStringWriteAndReadTest) {  // NOLINT
   const int expected_version = 5;
+  const int expected_request_id = 9;
   const std::string expected_details = "Sample message";
   std::string str;
-  scom::WriteMessage(expected_version, expected_details, str);
-  int version = 1;
+  scom::WriteMessage(
+      expected_version,
+      expected_request_id,
+      expected_details,
+      str);
+  int version = 0;
+  int request_id = 0;
   std::string details;
-  scom::ReadMessage(version, details, str);
+  scom::ReadMessage(str, version, request_id, details);
   EXPECT_EQ(expected_version, version);
+  EXPECT_EQ(expected_request_id, request_id);
   LOG(INFO) << "Read version: " << version;
   LOG(INFO) << "Read details: " << details;
   EXPECT_EQ(0, details.compare(expected_details));

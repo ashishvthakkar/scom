@@ -25,8 +25,9 @@ int main(int argc, char** argv) {
          &i](const char* buffer, int bytes_read, ssh::Channel& channel) {
           if (bytes_read > 0) {
             int version = 0;
+            int request_id = 0;
             std::string payload;
-            scom::ReadMessage(version, payload, buffer);
+            scom::ReadMessage(buffer, version, request_id, payload);
             CHECK(version == kProtocolVersion)
                 << "Unexpected version: " << version;
             LOG(INFO) << "Got payload: " << payload;
@@ -38,6 +39,7 @@ int main(int argc, char** argv) {
           std::string protobuf_request;
           scom::WriteMessage(
               kProtocolVersion,
+              i,
               requests.at(i),
               protobuf_request);
           protobuf_request.append("\n");
