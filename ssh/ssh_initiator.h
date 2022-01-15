@@ -6,6 +6,7 @@
 #include <array>
 #include <functional>
 #include <iostream>
+// #define SSH_NO_CPP_EXCEPTIONS 1
 #include <libssh/libsshpp.hpp>
 
 // TODO(ashish): Convert to no except mode.

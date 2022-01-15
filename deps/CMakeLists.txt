@@ -85,8 +85,10 @@ KyDep(
   GIT_REPOSITORY https://git.libssh.org/projects/libssh.git
   GIT_TAG da6d026c125712d197479a7930b4efc117bfe7af # libssh-0.9.6
 
-  CMAKE_ARGS
-  -DSSH_NO_CPP_EXCEPTIONS=1
+  # CMAKE_ARGS
+  # -DCMAKE_CXX_FLAGS=-DSSH_NO_CPP_EXCEPTIONS
+  # -DFOO=BAR
+
 
   ${zlib_DEPENDENCY}
   ${OpenSSL_DEPENDENCY})

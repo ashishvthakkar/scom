@@ -1,3 +1,4 @@
+add_compile_definitions(SSH_NO_CPP_EXCEPTIONS)
 add_executable(ssh_demo
         ssh_initiator.cc
         ssh_requestor.cc
@@ -9,6 +10,8 @@ target_link_libraries(ssh_demo
         PRIVATE ssh)
 target_include_directories(ssh_demo
         PRIVATE ${CMAKE_BINARY_DIR}/include)         
+# target_compile_definitions(ssh_demo 
+#         PUBLIC SSH_NO_CPP_EXCEPTIONS)
 
 add_executable(ssh_responder
         ssh_responder_app.cc
