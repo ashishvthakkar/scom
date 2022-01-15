@@ -24,7 +24,7 @@ TEST_F(ProtocolTests, BasicReadTest) {  // NOLINT
   std::fstream test_file_in(
       kTestDataDir / "protobuf_test_data",
       std::ios::in | std::ios::binary);
-  unsigned int version = 1;
+  int version = 1;
   std::string details;
   scom::ReadMessage(version, details, test_file_in);
   EXPECT_EQ(version, kProtocolVersion);
@@ -33,7 +33,7 @@ TEST_F(ProtocolTests, BasicReadTest) {  // NOLINT
 }
 
 void WriteToFile(
-    const unsigned int version,
+    const int version,
     const std::string &details,
     const std::filesystem::path &path) {
   std::fstream out(path, std::ios::out | std::ios::trunc | std::ios::binary);
@@ -46,10 +46,10 @@ TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
   scom::TempPath temp;
   LOG(INFO) << "Using temp path: " << temp.Path();
   std::filesystem::path test_file_path = temp.Path() / "test_data_file";
-  const unsigned int expected_version = 4;
+  const int expected_version = 4;
   const std::string expected_details = "Sample message";
   WriteToFile(expected_version, expected_details, test_file_path);
-  unsigned int version = 1;
+  int version = 1;
   std::string details;
   std::fstream test_file_in(test_file_path, std::ios::in | std::ios::binary);
   scom::ReadMessage(version, details, test_file_in);
@@ -59,11 +59,11 @@ TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
 }
 
 TEST_F(ProtocolTests, BasicStringWriteAndReadTest) {  // NOLINT
-  const unsigned int expected_version = 5;
+  const int expected_version = 5;
   const std::string expected_details = "Sample message";
   std::string str;
   scom::WriteMessage(expected_version, expected_details, str);
-  unsigned int version = 1;
+  int version = 1;
   std::string details;
   scom::ReadMessage(version, details, str);
   EXPECT_EQ(expected_version, version);

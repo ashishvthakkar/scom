@@ -8,7 +8,7 @@ namespace scom {
 void InitProtobuf() { GOOGLE_PROTOBUF_VERIFY_VERSION; }
 
 bool WriteMessage(
-    unsigned int version,
+    int version,
     const std::string &message,
     std::ostream &ostream) {
   scom::Header header;
@@ -18,7 +18,7 @@ bool WriteMessage(
 }
 
 bool WriteMessage(
-    unsigned int version,
+    int version,
     const std::string &message,
     std::string &out_string) {
   scom::Header header;
@@ -27,10 +27,7 @@ bool WriteMessage(
   return header.SerializeToString(&out_string);
 }
 
-bool ReadMessage(
-    unsigned int &version,
-    std::string &message,
-    std::istream &istream) {
+bool ReadMessage(int &version, std::string &message, std::istream &istream) {
   scom::Header header;
   auto result = header.ParseFromIstream(&istream);
   if (!result)
@@ -41,7 +38,7 @@ bool ReadMessage(
 }
 
 bool ReadMessage(
-    unsigned int &version,
+    int &version,
     std::string &message,
     const std::string &in_string) {
   scom::Header header;

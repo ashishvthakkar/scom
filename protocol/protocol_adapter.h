@@ -8,22 +8,19 @@ namespace scom {
 void InitProtobuf();
 
 bool WriteMessage(
-    unsigned int version,
+    int version,
     const std::string &message,
     std::ostream &ostream);
 
 bool WriteMessage(
-    unsigned int version,
+    int version,
     const std::string &message,
     std::string &out_string);
 
-bool ReadMessage(
-    unsigned int &version,
-    std::string &message,
-    std::istream &istream);
+bool ReadMessage(int &version, std::string &message, std::istream &istream);
 
 bool ReadMessage(
-    unsigned int &version,
+    int &version,
     std::string &message,
     const std::string &in_string);
 

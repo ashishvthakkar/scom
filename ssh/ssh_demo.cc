@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
           scom::WriteMessage(expected_version, "ProtobufDetails", str);
           LOG(INFO) << "Sending message (size: " << str.size()
                     << ")with following information: ";
-          unsigned int version = 0;
+          int version = 0;
           std::string details;
           scom::ReadMessage(version, details, str);
           std::cout << "Sending message with version " << version

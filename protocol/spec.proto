@@ -3,6 +3,6 @@ syntax = "proto3";
 package scom;
 
 message Header {
-  uint32 version = 1;
+  int32 version = 1;
   string details = 2;
 }
