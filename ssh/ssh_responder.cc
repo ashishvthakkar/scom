@@ -1,4 +1,5 @@
 #include <config.h>
+#include <glog/logging.h>
 
 #include <fstream>
 #include <iostream>
@@ -18,6 +19,7 @@ public:
     int version = 0;
     std::string details;
     scom::ReadMessage(version, details, input);
+    CHECK(version == kProtocolVersion) << "Unexpected version: " << version;
     log_file_ << "Read message with version " << version
               << " and details: " << std::endl;
     log_file_ << details << std::endl;

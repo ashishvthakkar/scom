@@ -24,9 +24,12 @@ int main(int argc, char** argv) {
         [&requests,
          &i](const char* buffer, int bytes_read, ssh::Channel& channel) {
           if (bytes_read > 0) {
-            LOG(INFO) << "Got callback with " << bytes_read << " bytes read.";
-            // TODO(ashish): Update to scom::read
-            LOG(INFO) << "Got response: " << buffer;
+            int version = 0;
+            std::string payload;
+            scom::ReadMessage(version, payload, buffer);
+            CHECK(version == kProtocolVersion)
+                << "Unexpected version: " << version;
+            LOG(INFO) << "Got payload: " << payload;
           }
           if (i >= requests.size()) {
             return true;  // done
@@ -40,7 +43,7 @@ int main(int argc, char** argv) {
           protobuf_request.append("\n");
           channel.write(protobuf_request.data(), protobuf_request.size());
           i++;
-          return false;  // not done yet
+          return false;  // more requests to follow
         });
   } catch (...) {
     LOG(ERROR) << "Error executing ssh demo.";
