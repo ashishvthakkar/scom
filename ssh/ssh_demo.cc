@@ -1,3 +1,4 @@
+#include <config.h>
 #include <gflags/gflags.h>
 
 #include "../protocol/protocol_adapter.h"
@@ -12,28 +13,34 @@ DEFINE_string(                           // NOLINT
 
 int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
+  std::array<std::string, 2> requests{"Request1", "Request2"};
   // TODO(ashish): Remove as part of no_except change
   try {
+    auto i = 0;
     SshInitiator(
         FLAGS_host,
         FLAGS_user,
         FLAGS_command,
-        [](const char* /*buffer*/, int bytes_read, ssh::Channel& channel) {
-          LOG(INFO) << "Got callback with " << bytes_read << " bytes read.";
-          const int expected_version = 2;
-          std::string str;
-          scom::WriteMessage(expected_version, "ProtobufDetails", str);
-          LOG(INFO) << "Sending message (size: " << str.size()
-                    << ")with following information: ";
-          int version = 0;
-          std::string details;
-          scom::ReadMessage(version, details, str);
-          std::cout << "Sending message with version " << version
-                    << " and details: " << std::endl;
-          std::cout << details << std::endl;
-          str.append("\n");
-          LOG(INFO) << "Sending size: " << str.size();
-          channel.write(str.data(), str.size());
+        [&requests,
+         &i](const char* buffer, int bytes_read, ssh::Channel& channel) {
+          if (bytes_read > 0) {
+            LOG(INFO) << "Got callback with " << bytes_read << " bytes read.";
+            // TODO(ashish): Update to scom::read
+            LOG(INFO) << "Got response: " << buffer;
+          }
+          if (i >= requests.size()) {
+            return true;  // done
+          }
+          LOG(INFO) << "Sending request: " << requests.at(i);
+          std::string protobuf_request;
+          scom::WriteMessage(
+              kProtocolVersion,
+              requests.at(i),
+              protobuf_request);
+          protobuf_request.append("\n");
+          channel.write(protobuf_request.data(), protobuf_request.size());
+          i++;
+          return false;  // not done yet
         });
   } catch (...) {
     LOG(ERROR) << "Error executing ssh demo.";

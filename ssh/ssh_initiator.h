@@ -9,10 +9,10 @@
 class SshInitiator {
 private:
   static const int kBufferSize = 1024;
-  static const int kReadTimeoutMs = 5'000;
+  static const int kReadTimeoutMs = -1;  // 5'000;
 
 public:
-  using ChannelReadCallback = std::function<void(
+  using ChannelReadCallback = std::function<bool(
       const char * /*buffer*/,
       int /*number of bytes read*/,
       ssh::Channel & /*channel*/)>;
@@ -51,8 +51,15 @@ public:
 
     std::string buffer;
     buffer.resize(kBufferSize);
+    auto bytes_read = 0;
     while (true) {
-      auto bytes_read =
+      auto done = read_callback(buffer.data(), bytes_read, channel);
+      if (done) {
+        break;
+      }
+      buffer.clear();
+      buffer.resize(kBufferSize);
+      bytes_read =
           channel.read(buffer.data(), buffer.size() - 1, kReadTimeoutMs);
       LOG(INFO) << "Read " << bytes_read << " bytes";
       if (bytes_read == 0) {
@@ -61,7 +68,6 @@ public:
       buffer.at(bytes_read) = '\0';
       LOG(INFO) << "Printing read data:";
       LOG(INFO) << buffer.data();
-      read_callback(buffer.data(), bytes_read, channel);
     }
   }
 

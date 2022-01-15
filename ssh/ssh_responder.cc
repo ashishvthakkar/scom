@@ -10,8 +10,6 @@ public:
   explicit SshResponder(const std::string& log_file_name) {
     // NOTE: No std::ios_base::app is used
     log_file_.open(log_file_name);
-    std::cout << "Responder started and will log to " << kResponderLog
-              << " <eom>" << std::endl;
   }
 
   void ProcessInput(const std::string& input) {
@@ -23,7 +21,9 @@ public:
     log_file_ << "Read message with version " << version
               << " and details: " << std::endl;
     log_file_ << details << std::endl;
-    std::cout << ConstructProtobufResponse(version, details);
+    auto protobuf_response = ConstructProtobufResponse(version, details);
+    std::cout << protobuf_response;
+    log_file_ << "Sent protobuf response: " << protobuf_response << std::endl;
     // TODO(ashish): Add request id
     log_file_ << "Done with request." << std::endl;
   }
@@ -40,8 +40,8 @@ private:
       const std::string& request_payload) {
     std::string response = ConstructResponse(request_payload);
     std::string protobuf_response;
-    log_file_ << "Protobuf output: " << protobuf_response << std::endl;
     scom::WriteMessage(version, response, protobuf_response);
+    log_file_ << "Protobuf output: " << protobuf_response << std::endl;
     return protobuf_response;
   }
 

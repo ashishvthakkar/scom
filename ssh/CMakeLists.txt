@@ -11,6 +11,8 @@ target_link_libraries(ssh_demo
         PRIVATE gflags
         PRIVATE protocol
         PRIVATE ssh)
+target_include_directories(ssh_demo
+        PRIVATE ${CMAKE_BINARY_DIR}/include)         
 
 add_executable(ssh_responder
         ssh_responder.cc)

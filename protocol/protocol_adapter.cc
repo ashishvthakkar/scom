@@ -7,29 +7,23 @@ namespace scom {
 
 void InitProtobuf() { GOOGLE_PROTOBUF_VERIFY_VERSION; }
 
-bool WriteMessage(
-    int version,
-    const std::string &message,
-    std::ostream &ostream) {
+bool WriteMessage(int version, const std::string &message, std::ostream &out) {
   scom::Header header;
   header.set_version(version);
   header.set_details(message);
-  return header.SerializeToOstream(&ostream);
+  return header.SerializeToOstream(&out);
 }
 
-bool WriteMessage(
-    int version,
-    const std::string &message,
-    std::string &out_string) {
+bool WriteMessage(int version, const std::string &message, std::string &out) {
   scom::Header header;
   header.set_version(version);
   header.set_details(message);
-  return header.SerializeToString(&out_string);
+  return header.SerializeToString(&out);
 }
 
-bool ReadMessage(int &version, std::string &message, std::istream &istream) {
+bool ReadMessage(int &version, std::string &message, std::istream &in) {
   scom::Header header;
-  auto result = header.ParseFromIstream(&istream);
+  auto result = header.ParseFromIstream(&in);
   if (!result)
     return result;
   version = header.version();
@@ -37,12 +31,9 @@ bool ReadMessage(int &version, std::string &message, std::istream &istream) {
   return true;
 }
 
-bool ReadMessage(
-    int &version,
-    std::string &message,
-    const std::string &in_string) {
+bool ReadMessage(int &version, std::string &message, const std::string &in) {
   scom::Header header;
-  auto result = header.ParseFromString(in_string);
+  auto result = header.ParseFromString(in);
   if (!result)
     return result;
   version = header.version();
