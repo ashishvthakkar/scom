@@ -5,6 +5,8 @@
 
 // Prod config
 static constexpr int kProtocolVersion = 3;
+static const std::string kResponderLog =
+    R"(${CMAKE_SOURCE_DIR}/build/responder_log.txt)";
 
 // Tests related config
 static const std::filesystem::path kTestDataDir =

@@ -19,3 +19,5 @@ target_link_libraries(ssh_responder
         PRIVATE gflags
         PRIVATE protocol
         PRIVATE ssh)
+target_include_directories(ssh_responder
+        PRIVATE ${CMAKE_BINARY_DIR}/include)         
