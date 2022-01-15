@@ -9,6 +9,7 @@
 class SshInitiator {
 private:
   static const int kBufferSize = 1024;
+  static const int kReadTimeoutMs = 5'000;
 
 public:
   using ChannelReadCallback = std::function<void(
@@ -51,7 +52,8 @@ public:
     std::string buffer;
     buffer.resize(kBufferSize);
     while (true) {
-      auto bytes_read = channel.read(buffer.data(), buffer.size() - 1, -1);
+      auto bytes_read =
+          channel.read(buffer.data(), buffer.size() - 1, kReadTimeoutMs);
       LOG(INFO) << "Read " << bytes_read << " bytes";
       if (bytes_read == 0) {
         break;
