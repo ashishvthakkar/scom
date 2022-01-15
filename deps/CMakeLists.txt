@@ -35,7 +35,7 @@ KyDep(glog
     CMAKE_ARGS
     -DBUILD_TESTING=FALSE
 
-    ${DEPENDS_ON_gflags}
+    ${gflags_DEPENDENCY}
 )
 
 # Fetch googletest
@@ -66,7 +66,7 @@ KyDep(
   -Dprotobuf_BUILD_TESTS=OFF
   -Dprotobuf_MSVC_STATIC_RUNTIME=ON
 
-  ${DEPENDS_ON_zlib})
+  ${zlib_DEPENDENCY})
     
 KyDep(
   OpenSSL
@@ -78,15 +78,18 @@ KyDep(
   BUILD_COMMAND make -C <SOURCE_DIR> build_libs
   INSTALL_COMMAND make -C <SOURCE_DIR> install_dev
 
-  ${DEPENDS_ON_zlib})
+  ${zlib_DEPENDENCY})
 
 KyDep(
   libssh
   GIT_REPOSITORY https://git.libssh.org/projects/libssh.git
   GIT_TAG da6d026c125712d197479a7930b4efc117bfe7af # libssh-0.9.6
 
-  ${DEPENDS_ON_zlib}
-  ${DEPENDS_ON_OpenSSL})
+  CMAKE_ARGS
+  -DSSH_NO_CPP_EXCEPTIONS=1
+
+  ${zlib_DEPENDENCY}
+  ${OpenSSL_DEPENDENCY})
 
 KyDep(
   experiments
