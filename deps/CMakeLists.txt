@@ -3,20 +3,16 @@
 #
 cmake_minimum_required(VERSION 3.20)
 project(kydeps)
-
-set(DEPS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-if (NOT (CMAKE_SOURCE_DIR STREQUAL DEPS_SOURCE_DIR))
+if (CMAKE_SOURCE_DIR STREQUAL kydeps_SOURCE_DIR)
+    include(kydep)
+else()
     include(FetchContent)
     FetchContent_Declare(kydep_bootstrap
         GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
-        GIT_TAG rejigger # TODO(ashish): Update to specific commit tag
+        GIT_TAG v2.3
     )
     FetchContent_MakeAvailable(kydep_bootstrap)
-    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" PARENT_SCOPE)
-    return()
 endif()
-
-include(kydep)
 #
 # ===== [END] KyDeps CMakeLists.txt preamble ===================================
 # ==============================================================================
@@ -77,6 +73,7 @@ KyDep(
   GIT_REPOSITORY https://github.com/openssl/openssl.git
   GIT_TAG fd78df59b0f656aefe96e39533130454aa957c00 # OpenSSL_1_1_1k
 
+  PATCH_COMMAND echo <INSTALL_DIR>
   CONFIGURE_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ./config no-shared no-dso --prefix=<INSTALL_DIR> --openssldir=<INSTALL_DIR>
   BUILD_COMMAND make -C <SOURCE_DIR> build_libs
   INSTALL_COMMAND make -C <SOURCE_DIR> install_dev

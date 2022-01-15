@@ -32,7 +32,7 @@ add_subdirectory(tests)
 add_subdirectory(temp_path)
 add_subdirectory(protocol)
 add_subdirectory(ssh)
-        
+
 add_executable(main main.cc)
 target_link_libraries(main 
     PRIVATE gflags
