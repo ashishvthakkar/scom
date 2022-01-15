@@ -35,16 +35,13 @@ void SshInitiator::SshExecuteAtRemote(
     if (done) {
       break;
     }
+    // TODO(ashish): Evaluate whether the next two lines can be removed.
     buffer.clear();
     buffer.resize(kBufferSize);
     bytes_read = channel.read(buffer.data(), buffer.size() - 1, kReadTimeoutMs);
-    LOG(INFO) << "Read " << bytes_read << " bytes";
     if (bytes_read == 0) {
       break;
     }
-    buffer.at(bytes_read) = '\0';
-    LOG(INFO) << "Printing read data:";
-    LOG(INFO) << buffer.data();
   }
 }
 

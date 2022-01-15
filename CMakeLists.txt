@@ -10,7 +10,7 @@ set(CMAKE_CXX_CLANG_TIDY
         "--export-fixes=${CMAKE_BINARY_DIR}/clang-tidy.fixes")
 
 # kydeps based bootstrap
-set(KYDEPS gflags glog GTest zlib protobuf OpenSSL libssh)
+set(KYDEPS gflags glog GTest zlib protobuf OpenSSL libssh experiments)
 add_subdirectory(deps)
 find_package(gflags REQUIRED NO_MODULE)
 find_package(glog REQUIRED NO_MODULE)
@@ -19,6 +19,7 @@ find_package(zlib REQUIRED NO_MODULE)
 find_package(protobuf REQUIRED NO_MODULE)
 find_package(OpenSSL REQUIRED) # Note lack of NO_MODULE
 find_package(libssh REQUIRED NO_MODULE)
+# find_package(experiments REQUIRED NO_MODULE) 
 
 # Set up testing
 include(CTest)

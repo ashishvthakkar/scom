@@ -10,7 +10,7 @@ bool SshRequestor::SshResponseHandler(
     std::string payload;
     scom::ReadMessage(buffer, version, request_id, payload);
     CHECK(version == kProtocolVersion) << "Unexpected version: " << version;
-    LOG(INFO) << "Got payload: " << payload;
+    LOG(INFO) << "For request " << request_id << ", got payload: " << payload;
   }
   if (next_request_id_ >= requests_.size()) {
     return true;  // done
