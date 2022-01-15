@@ -1,9 +1,3 @@
-add_executable(ssh_exec
-        ssh_exec.cc)
-target_link_libraries(ssh_exec
-        PRIVATE glog::glog
-        PRIVATE ssh)
-
 add_executable(ssh_demo
         ssh_demo.cc)
 target_link_libraries(ssh_demo
