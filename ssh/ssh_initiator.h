@@ -6,44 +6,41 @@
 #include <array>
 #include <functional>
 #include <iostream>
-// #define SSH_NO_CPP_EXCEPTIONS 1
 #include <libssh/libsshpp.hpp>
+#include <memory>
 
-// TODO(ashish): Convert to no except mode.
 class SshInitiator {
 public:
-  using ChannelReadCallback = std::function<bool(
-      const char * /*buffer*/,
-      int /*number of bytes read*/,
-      ssh::Channel & /*channel*/)>;
-
   SshInitiator(
       const std::string &host,
       const std::string &username,
-      const std::string &remote_command,
-      const ChannelReadCallback &read_callback);
-  ~SshInitiator();
+      const std::string &remote_command);
 
-  SshInitiator(const SshInitiator &) = delete;
-  SshInitiator &operator=(const SshInitiator &) = delete;
-  SshInitiator(SshInitiator &&) = delete;
-  SshInitiator &operator=(const SshInitiator &&) = delete;
-
-  static void SshExecuteAtRemote(
-      const std::string &remote_command,
-      const ChannelReadCallback &read_callback,
-      ssh::Session &session);
+  void Send(const std::string &request, std::string &response);
 
 private:
-  static void SshConnect(
-      const std::string &host,
-      const std::string &username,
-      ssh::Session &session);
+  // NOTE: The below class exists only to call init and finalize.
+  // Depending on the libssh version used, it may be possible to remove
+  // this.
+  class SshEnvMgr {
+  public:
+    SshEnvMgr();
+    ~SshEnvMgr();
+  };
 
-  static void SshAuthenticate(ssh::Session &session);
+  void SshConnect(const std::string &host, const std::string &username);
+  void SshAuthenticate();
+  void SshExecuteAtRemote(const std::string &remote_command);
 
-  static const int kBufferSize = 1024;
-  static const int kReadTimeoutMs = -1;  // 5'000;
+  static const int kReadTimeoutMs = -1;  // milliseconds, -1 for indefinite
+  static const int kSshVerbosity = SSH_LOG_PROTOCOL;
+  static const int kSshPort = 22;
+  static const int kPasswordSize = 32;  // TODO(ashish): update
+
+  SshEnvMgr ssh_env_mgr_;
+  ssh::Session ssh_session_;
+  // NOTE: We store a unique ptr to ssh::Channel as ssh:Channel cannot be moved
+  std::unique_ptr<ssh::Channel> ssh_channel_;
 };
 
 #endif

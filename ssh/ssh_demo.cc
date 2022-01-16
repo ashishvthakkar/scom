@@ -14,12 +14,10 @@ DEFINE_string(                           // NOLINT
 int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   std::vector<std::string> requests{"Request1", "Request2"};
-  // TODO(ashish): Remove as part of no_except change
-  try {
-    SshRequestor requestor(requests, FLAGS_host, FLAGS_user, FLAGS_command);
-  } catch (...) {
-    LOG(ERROR) << "Error executing ssh demo.";
-    return -1;
+  SshRequestor requestor(FLAGS_host, FLAGS_user, FLAGS_command);
+  for (const auto& request : requests) {
+    const auto& response = requestor.Send(request);
+    LOG(INFO) << "Got response with size: " << response.size();
   }
   return 0;
 }

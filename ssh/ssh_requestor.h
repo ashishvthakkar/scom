@@ -7,17 +7,14 @@
 class SshRequestor {
 public:
   explicit SshRequestor(
-      const std::vector<std::string>& requests,
       const std::string& host,
       const std::string& user,
       const std::string& command);
 
+  std::string Send(const std::string& request);
+
   // Note: Targets
   // 1.
-  // explicit SshRequestor(
-  //     const std::string& host,
-  //     const std::string& user,
-  //     const std::string& command);
   // const std::vector<char>& Request(const std::vector<char>& request);
   // stdin --- read and write (1 and 2 as file descriptor)
 
@@ -29,12 +26,12 @@ public:
   // template<typename T, typename U>
   // const U& Request(const T &request);
 
-  // std::vector<std::string> Request(const std::vector<std::string> &request);
+  // std::vector<std::string> Request(const std::vector<std::string>
+  // &request);
 
 private:
-  bool
-  SshResponseHandler(const char* buffer, int bytes_read, ssh::Channel& channel);
+  static const int kBufferSize = 1024;
 
-  const std::vector<std::string>& requests_;
-  int next_request_id_;
+  SshInitiator ssh_initator_;
+  int request_id_;
 };
