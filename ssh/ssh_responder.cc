@@ -29,6 +29,15 @@ int SshResponder::ReadNextMessage(std::string& buffer) {
   return bytes_read;
 }
 
+void SshResponder::WriteOutputMessage(std::string& output) {
+  if (output.empty()) {
+    return;
+  }
+  log_file_ << "Writing response with size: " << output.size();
+  std::fwrite(output.data(), sizeof(output[0]), output.size(), stdout);
+  std::fflush(stdout);
+}
+
 void SshResponder::ProcessInput(const std::string& input) {
   log_file_ << "Received input with size: " << input.size() << std::endl;
   log_file_ << "Received input: " << input << std::endl;
@@ -42,7 +51,9 @@ void SshResponder::ProcessInput(const std::string& input) {
   log_file_ << details << std::endl;
   auto protobuf_response =
       ConstructProtobufResponse(version, request_id, details);
-  std::cout << protobuf_response << std::endl;
+  // protobuf_response += std::endl;
+  // std::cout << protobuf_response << std::endl;
+  WriteOutputMessage(protobuf_response);
   log_file_ << "Sent protobuf response with size: " << protobuf_response.size()
             << std::endl;
   log_file_ << "Sent protobuf response: " << protobuf_response << std::endl;
