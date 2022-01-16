@@ -21,6 +21,14 @@ find_package(OpenSSL REQUIRED) # Note lack of NO_MODULE
 find_package(libssh REQUIRED NO_MODULE)
 # find_package(experiments REQUIRED NO_MODULE) 
 
+include(FetchContent)
+FetchContent_Declare(
+  experiments
+  GIT_REPOSITORY https://github.com/ashishvthakkar/experiments.git
+  GIT_TAG 2805a4d4d896013a6a4421fb101813c5e719a12f # v20220115
+  )
+FetchContent_MakeAvailable(experiments)
+
 # Set up testing
 include(CTest)
 enable_testing()

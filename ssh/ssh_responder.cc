@@ -1,11 +1,13 @@
 #include "ssh_responder.h"
 
+#include <utils.h>
+
 SshResponder::SshResponder(const std::string& log_file_name) {
   // NOTE: No std::ios_base::app is used
   log_file_.open(log_file_name);
-  // std::string expression("5+2");
-  // log_file_ << expression
-  //           << " computes to: " << code_experiments::Compute(expression);
+  std::string expression("5+2");
+  log_file_ << expression
+            << " computes to: " << code_experiments::Compute(expression);
 }
 
 void SshResponder::ProcessInput(const std::string& input) {

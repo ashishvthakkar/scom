@@ -92,9 +92,3 @@ KyDep(
 
   ${zlib_DEPENDENCY}
   ${OpenSSL_DEPENDENCY})
-
-KyDep(
-  experiments
-  GIT_REPOSITORY https://github.com/ashishvthakkar/experiments.git
-  GIT_TAG 2805a4d4d896013a6a4421fb101813c5e719a12f # v20220115
-  )

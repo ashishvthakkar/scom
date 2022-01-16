@@ -20,8 +20,10 @@ target_link_libraries(ssh_responder
         PRIVATE glog::glog
         PRIVATE gflags
         PRIVATE protocol
-        # PRIVATE expressions TODO(ashish): evaluate
+        PRIVATE expressions
         PRIVATE ssh)
 target_include_directories(ssh_responder
         PRIVATE ${CMAKE_BINARY_DIR}/include
-        PRIVATE ${CMAKE_BINARY_DIR}/deps/experiments/s/expressions/) # TODO(ashish): update
+        PRIVATE ${CMAKE_BINARY_DIR}/_deps/experiments-src/expressions/
+        # PRIVATE ${CMAKE_BINARY_DIR}/deps/experiments/s/expressions/
+        ) # TODO(ashish): update
