@@ -8,8 +8,14 @@ static constexpr int kProtocolVersion = 3;
 static const std::string kResponderLog =
     R"(${CMAKE_SOURCE_DIR}/build/responder_log.txt)";
 
+static const std::string kResponderCommand =
+    R"(${CMAKE_SOURCE_DIR}/build/ssh/ssh_responder)";
+
 // Tests related config
 static const std::filesystem::path kTestDataDir =
     R"(${CMAKE_SOURCE_DIR}/test_data)";
+
+static const std::string kSshTestHost = "localhost";
+static const std::string kSshTestUser = R"($ENV{USER})";
 
 #endif

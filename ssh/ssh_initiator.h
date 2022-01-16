@@ -35,7 +35,7 @@ private:
   static const int kReadTimeoutMs = -1;  // milliseconds, -1 for indefinite
   static const int kSshVerbosity = SSH_LOG_PROTOCOL;
   static const int kSshPort = 22;
-  static const int kPasswordSize = 32;  // TODO(ashish): update
+  static const int kPasswordSize = 1024;  // TODO(ashish): update
 
   SshEnvMgr ssh_env_mgr_;
   ssh::Session ssh_session_;
