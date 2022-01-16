@@ -1,5 +1,7 @@
 #include "ssh_initiator.h"
 
+#include <config.h>
+
 SshInitiator::SshEnvMgr::SshEnvMgr() {
   CHECK_EQ(SSH_OK, ssh_init()) << "Could not initiatlize ssh lib";
 }
@@ -67,30 +69,17 @@ void SshInitiator::SshExecuteAtRemote(const std::string &remote_command) {
 }
 
 void SshInitiator::Send(const std::string &request, std::string &response) {
+  LOG_ASSERT(sizeof(int) == kSizeOfMsgLen);  // << "Unexpected size mismatch";
+  int size = request.size();
+  ssh_channel_->write(&size, sizeof(size));
   ssh_channel_->write(request.data(), request.size());
-  auto bytes_read =
+
+  auto bytes_read = ssh_channel_->read(&size, sizeof(size), kReadTimeoutMs);
+  LOG(INFO) << "Read next response size of: " << size;
+  CHECK(bytes_read == sizeof(size)) << "Error reading size";
+  bytes_read =
       ssh_channel_->read(response.data(), response.size(), kReadTimeoutMs);
   CHECK(bytes_read <= response.size())
       << "Potential buffer overflow when reading from ssh channel";
   response.resize(bytes_read);
 }
-
-// void SshInitiator::SshRequest(const std::vector<char> request) {
-//   std::string buffer;
-//   buffer.resize(kBufferSize);
-//   auto bytes_read = 0;
-//   while (true) {
-//     // auto done = read_callback(buffer.data(), bytes_read, channel);
-//     // if (done) {
-//     //   break;
-//     // }
-//     // TODO(ashish): Evaluate whether the next two lines can be removed.
-//     buffer.clear();
-//     buffer.resize(kBufferSize);
-//     bytes_read =
-//         ssh_channel_->read(buffer.data(), buffer.size() - 1, kReadTimeoutMs);
-//     if (bytes_read == 0) {
-//       break;
-//     }
-//   }
-// }

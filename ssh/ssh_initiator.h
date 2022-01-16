@@ -32,7 +32,7 @@ private:
   void SshAuthenticate();
   void SshExecuteAtRemote(const std::string &remote_command);
 
-  static const int kReadTimeoutMs = -1;  // milliseconds, -1 for indefinite
+  static const int kReadTimeoutMs = 5'000;  // milliseconds, -1 for indefinite
   static const int kSshVerbosity = SSH_LOG_PROTOCOL;
   static const int kSshPort = 22;
   static const int kPasswordSize = 1024;  // TODO(ashish): update

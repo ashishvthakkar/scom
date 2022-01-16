@@ -27,10 +27,11 @@ std::string SshRequestor::Send(const std::string& request) {
   LOG(INFO) << "Sending request: " << request;
   std::string protobuf_request;
   scom::WriteMessage(kProtocolVersion, request_id_, request, protobuf_request);
-  protobuf_request.append("\n");
+  // protobuf_request.append("\n");
+  LOG(INFO) << "Sending pb request with size: " << protobuf_request.size();
   request_id_++;
   std::string protobuf_response;
-  protobuf_response.resize(kBufferSize);
+  protobuf_response.resize(25);  // TODO(ashish): change NOLINT
   ssh_initator_.Send(protobuf_request, protobuf_response);
   // NOTE: Relying on RVO to optimize the below return
   return protobuf_response;
