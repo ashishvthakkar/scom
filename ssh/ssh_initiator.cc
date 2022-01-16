@@ -77,6 +77,7 @@ void SshInitiator::Send(const std::string &request, std::string &response) {
   auto bytes_read = ssh_channel_->read(&size, sizeof(size), kReadTimeoutMs);
   LOG(INFO) << "Read next response size of: " << size;
   CHECK(bytes_read == sizeof(size)) << "Error reading size";
+  response.resize(size);
   bytes_read =
       ssh_channel_->read(response.data(), response.size(), kReadTimeoutMs);
   CHECK(bytes_read <= response.size())

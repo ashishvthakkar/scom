@@ -12,7 +12,7 @@
 class SshResponder {
 public:
   explicit SshResponder(const std::string& log_file_name);
-  void ProcessInput(const std::string& input);
+  void ProcessMessage(const std::string& input);
   int ReadNextMessageSize();
   int ReadNextMessage(std::string& buffer);
   void WriteOutputMessage(std::string& output);

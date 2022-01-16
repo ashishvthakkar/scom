@@ -21,16 +21,13 @@ SshResponder::SshResponder(const std::string& log_file_name) {
 int SshResponder::ReadNextMessageSize() {
   std::string buffer;
   buffer.resize(kSizeOfMsgLen);
-  LOG_ASSERT(sizeof(int) == kSizeOfMsgLen);  // << "Unexpected size mismatch";
+  LOG_ASSERT(sizeof(int) == kSizeOfMsgLen) << "Unexpected size mismatch";
   auto bytes_read = ReadNextMessage(buffer);
   CHECK(bytes_read == kSizeOfMsgLen);
-  // if (std::feof(stdin) != 0) {
-  //   return 0;
-  // }
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
   int next_message_size = *(reinterpret_cast<int*>(buffer.data()));
   CHECK(bytes_read == sizeof(next_message_size)) << "Error reading size";
-  log_file_ << "Read next message size: " << next_message_size;
+  log_file_ << "Read next message size: " << next_message_size << std::endl;
   return next_message_size;
 }
 
@@ -41,7 +38,7 @@ int SshResponder::ReadNextMessage(std::string& buffer) {
   auto bytes_read =
       std::fread(buffer.data(), sizeof(buffer[0]), buffer.size(), stdin);
   CHECK(!std::ferror(stdin)) << "Error reading from stdin";
-  log_file_ << "Read next message with size: " << bytes_read;
+  log_file_ << "Read message with size: " << bytes_read << std::endl;
   return bytes_read;
 }
 
@@ -49,13 +46,17 @@ void SshResponder::WriteOutputMessage(std::string& output) {
   if (output.empty()) {
     return;
   }
-  log_file_ << "Writing response with size: " << output.size();
+  int size = output.size();
+  log_file_ << "Writing response size: " << size << std::endl;
+  std::fwrite(&size, sizeof(size), 1, stdout);
+  log_file_ << "Writing response: " << output << std::endl;
   std::fwrite(output.data(), sizeof(output[0]), output.size(), stdout);
+  std::fflush(stdout);
 }
 
-void SshResponder::ProcessInput(const std::string& input) {
-  log_file_ << "Received input with size: " << input.size() << std::endl;
-  log_file_ << "Received input: " << input << std::endl;
+void SshResponder::ProcessMessage(const std::string& input) {
+  log_file_ << "Received message with size: " << input.size() << std::endl;
+  log_file_ << "Received message: " << input << std::endl;
   int version = 0;
   int request_id = 0;
   std::string details;
