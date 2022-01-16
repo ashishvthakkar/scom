@@ -28,7 +28,8 @@ std::string SshRequestor::Send(const std::string& request) {
   std::string protobuf_request;
   scom::WriteMessage(kProtocolVersion, request_id_, request, protobuf_request);
   protobuf_request.append("\n");
-  request_id_++;
+  LOG(INFO) << "Sending request with size: " << protobuf_request.size();
+  // request_id_++; // TODO(ashish): Add back
   std::string protobuf_response;
   protobuf_response.resize(kBufferSize);
   ssh_initator_.Send(protobuf_request, protobuf_response);

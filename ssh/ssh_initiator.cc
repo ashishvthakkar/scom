@@ -67,6 +67,8 @@ void SshInitiator::SshExecuteAtRemote(const std::string &remote_command) {
 }
 
 void SshInitiator::Send(const std::string &request, std::string &response) {
+  // int size = request.size();
+  // ssh_channel_->write(&size, sizeof(size));
   ssh_channel_->write(request.data(), request.size());
   auto bytes_read =
       ssh_channel_->read(response.data(), response.size(), kReadTimeoutMs);
