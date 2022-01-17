@@ -1,6 +1,6 @@
 #include <config.h>
+#include <expressions/utils.h>
 
-#include "../expressions/utils.h"
 #include "ssh_responder.h"
 
 int main() {
