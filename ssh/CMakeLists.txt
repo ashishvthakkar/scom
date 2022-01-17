@@ -16,7 +16,7 @@ target_link_libraries(ssh_demo
         PRIVATE gflags
         PRIVATE ssh)
 target_include_directories(ssh_demo
-        PRIVATE ${CMAKE_BINARY_DIR}/include)         
+        PRIVATE ${CMAKE_BINARY_DIR}/include)
 # target_compile_definitions(ssh_demo 
 #         PUBLIC SSH_NO_CPP_EXCEPTIONS)
 
@@ -25,11 +25,12 @@ target_link_libraries(ssh_responder
         PRIVATE glog::glog
         PRIVATE gflags
         PRIVATE protocol
-        # PRIVATE expressions TODO(ashish): evaluate
+        PRIVATE expressions # TODO(ashish): change to package
         PRIVATE ssh)
 target_include_directories(ssh_responder
         PRIVATE ${CMAKE_BINARY_DIR}/include
-        PRIVATE ${CMAKE_BINARY_DIR}/deps/experiments/s/expressions/) # TODO(ashish): update
+        # PRIVATE ${CMAKE_BINARY_DIR}/deps/experiments/s/expressions/ # TODO(ashish): update
+        ) 
 
 add_executable(ssh_tests ssh_tests.cc)
 target_link_libraries(ssh_tests

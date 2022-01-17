@@ -31,6 +31,7 @@ configure_file(config.h.in ${CMAKE_BINARY_DIR}/include/config.h)
 add_subdirectory(tests)
 add_subdirectory(temp_path)
 add_subdirectory(protocol)
+add_subdirectory(expressions)
 add_subdirectory(ssh)
 
 add_executable(main main.cc)

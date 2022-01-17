@@ -4,6 +4,8 @@
 
 #include <cstdio>
 
+#include "../expressions/utils.h"
+
 namespace scom {
 
 SshResponder::SshResponder(const std::string& log_file_name) {
@@ -64,7 +66,8 @@ void SshResponder::ProcessMessage() {
 
 std::string SshResponder::ConstructResponse(
     const std::string& request_payload) {
-  std::string response = "Response for " + request_payload;
+  int result = code_experiments::Compute(request_payload);
+  std::string response = std::to_string(result);
   log_file_ << "Created resonse: " << response << std::endl;
   return response;
 }
