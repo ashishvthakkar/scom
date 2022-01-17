@@ -17,8 +17,15 @@ target_link_libraries(ssh_demo
         PRIVATE ssh)
 target_include_directories(ssh_demo
         PRIVATE ${CMAKE_BINARY_DIR}/include)
-# target_compile_definitions(ssh_demo 
-#         PUBLIC SSH_NO_CPP_EXCEPTIONS)
+
+add_executable(ssh_timed_demo ssh_timed_demo.cc)
+target_link_libraries(ssh_timed_demo
+        PRIVATE ssh_requestor_lib
+        PRIVATE glog::glog
+        PRIVATE gflags
+        PRIVATE ssh)
+target_include_directories(ssh_timed_demo
+        PRIVATE ${CMAKE_BINARY_DIR}/include)
 
 add_executable(ssh_responder 
         ssh_responder_app.cc 
@@ -32,8 +39,7 @@ target_link_libraries(ssh_responder
         PRIVATE ssh)
 target_include_directories(ssh_responder
         PRIVATE ${CMAKE_BINARY_DIR}/include
-        PRIVATE ${CMAKE_BINARY_DIR}/_deps/experiments-src/ # TODO(ashish): update
-        ) 
+        PRIVATE ${CMAKE_BINARY_DIR}/_deps/experiments-src/) 
 
 add_executable(ssh_tests ssh_tests.cc)
 target_link_libraries(ssh_tests
@@ -45,5 +51,6 @@ target_link_libraries(ssh_tests
         PRIVATE GTest::gtest_main)
 target_include_directories(ssh_tests
         PRIVATE ${CMAKE_BINARY_DIR}/include)        
-# Note: This is not automatically enabled as tests as it requires password for ssh connection
+# Note: This is not automatically enabled as tests as it requires password for 
+# ssh auth
 # gtest_discover_tests(ssh_tests)
