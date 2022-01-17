@@ -12,8 +12,8 @@ DEFINE_string(                           // NOLINT
     command,
     "",
     "[/home/ashish/git/scom/build/ssh/ssh_echo_responder]");
-DEFINE_int32(num_requests, 10, "[number of requests]");      // NOLINT
-DEFINE_int32(request_size, 1024, "[size of each request]");  // NOLINT
+DEFINE_int32(num_requests, 10000, "[number of requests]");   // NOLINT
+DEFINE_int32(request_size, 4000, "[size of each request]");  // NOLINT
 
 int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
   auto end = chrono::high_resolution_clock::now();
   LOG(INFO) << "Completing total requests with size "
             << (request_size * num_requests)
-            << " and receives responses with the same total size "
+            << " and receive responses with the same total size "
             << chrono::duration_cast<chrono::seconds>(end - start).count()
             << " seconds.";
 
