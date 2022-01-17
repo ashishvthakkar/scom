@@ -5,5 +5,5 @@ package scom;
 message Header {
   int32 version = 1;
   int32 request_id = 2;
-  string payload = 3;
+  bytes payload = 3;
 }
