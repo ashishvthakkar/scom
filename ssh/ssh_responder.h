@@ -8,25 +8,23 @@
 #include <iostream>
 
 #include "../protocol/protocol_adapter.h"
+#include "std_io_mgr.h"
 
 namespace scom {
 
 class SshResponder {
 public:
   explicit SshResponder(const std::string& log_file_name);
-  int GetNextMessageSize();
-  void HandleNextMessage(int message_size);
+  std::string Receive();
+  void Send(const std::string& message);
 
 private:
-  int Read(void* buffer, int buffer_size);
-  void ProcessMessage();
-  std::string ConstructResponse(const std::string& request_payload);
-  void ConstructProtobufResponse(
+  void ConstructProtobufMessage(
       int version,
       int request_id,
-      const std::string& request_payload);
-  void Send(std::string& output);
+      const std::string& payload);
 
+  StdIoMgr std_io_mgr_;
   std::string buffer_;
   std::ofstream log_file_;
 };

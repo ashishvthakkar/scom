@@ -20,7 +20,10 @@ target_include_directories(ssh_demo
 # target_compile_definitions(ssh_demo 
 #         PUBLIC SSH_NO_CPP_EXCEPTIONS)
 
-add_executable(ssh_responder ssh_responder_app.cc ssh_responder.cc)
+add_executable(ssh_responder 
+        ssh_responder_app.cc 
+        ssh_responder.cc 
+        std_io_mgr.cc)
 target_link_libraries(ssh_responder
         PRIVATE glog::glog
         PRIVATE gflags
