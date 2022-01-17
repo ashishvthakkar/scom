@@ -25,7 +25,11 @@ static void WriteToFile(
     const std::string &details,
     const std::filesystem::path &path) {
   std::fstream out(path, std::ios::out | std::ios::trunc | std::ios::binary);
-  CHECK(scom::WriteMessage(version, request_id, details, out))
+  HeaderWriteFields header{
+      .version = version,
+      .request_id = request_id,
+      .payload = details};
+  CHECK(scom::WriteMessage(header, out))
       << "Could not write message to test file";
   out.flush();
 }
@@ -45,11 +49,12 @@ TEST_F(ProtocolTests, BasicReadTest) {  // NOLINT
   //     1,
   //     write_details,
   //     kTestDataDir / "protobuf_test_data");
-  scom::ReadMessage(test_file_in, version, request_id, details);
-  EXPECT_EQ(version, kProtocolVersion);
-  EXPECT_EQ(1, request_id);
+  HeaderReadFields header;
+  scom::ReadMessage(test_file_in, header);
+  EXPECT_EQ(header.version, kProtocolVersion);
+  EXPECT_EQ(1, header.request_id);
   LOG(INFO) << "Read details: " << details;
-  EXPECT_EQ(0, details.compare("Test message"));
+  EXPECT_EQ(0, header.payload.compare("Test message"));
 }
 
 TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
@@ -68,11 +73,12 @@ TEST_F(ProtocolTests, BasicWriteAndReadTest) {  // NOLINT
   int request_id = 0;
   std::string details;
   std::fstream test_file_in(test_file_path, std::ios::in | std::ios::binary);
-  scom::ReadMessage(test_file_in, version, request_id, details);
-  EXPECT_EQ(expected_version, version);
-  EXPECT_EQ(expected_request_id, request_id);
-  LOG(INFO) << "Read details: " << details;
-  EXPECT_EQ(0, details.compare(expected_details));
+  HeaderReadFields header;
+  scom::ReadMessage(test_file_in, header);
+  EXPECT_EQ(expected_version, header.version);
+  EXPECT_EQ(expected_request_id, header.request_id);
+  LOG(INFO) << "Read details: " << header.payload;
+  EXPECT_EQ(0, header.payload.compare(expected_details));
 }
 
 TEST_F(ProtocolTests, BasicStringWriteAndReadTest) {  // NOLINT
@@ -80,20 +86,18 @@ TEST_F(ProtocolTests, BasicStringWriteAndReadTest) {  // NOLINT
   const int expected_request_id = 9;
   const std::string expected_details = "Sample message";
   std::string str;
-  scom::WriteMessage(
-      expected_version,
-      expected_request_id,
-      expected_details,
-      str);
-  int version = 0;
-  int request_id = 0;
-  std::string details;
-  scom::ReadMessage(str, version, request_id, details);
-  EXPECT_EQ(expected_version, version);
-  EXPECT_EQ(expected_request_id, request_id);
-  LOG(INFO) << "Read version: " << version;
-  LOG(INFO) << "Read details: " << details;
-  EXPECT_EQ(0, details.compare(expected_details));
+  HeaderWriteFields header{
+      .version = expected_version,
+      .request_id = expected_request_id,
+      .payload = expected_details};
+  scom::WriteMessage(header, str);
+  HeaderReadFields header_read;
+  scom::ReadMessage(str, header_read);
+  EXPECT_EQ(expected_version, header_read.version);
+  EXPECT_EQ(expected_request_id, header_read.request_id);
+  LOG(INFO) << "Read version: " << header_read.version;
+  LOG(INFO) << "Read details: " << header_read.payload;
+  EXPECT_EQ(0, header_read.payload.compare(expected_details));
 }
 
 }  // namespace scom

@@ -1,6 +1,8 @@
 #include <config.h>
 #include <gflags/gflags.h>
 
+#include <vector>
+
 #include "../protocol/protocol_adapter.h"
 #include "ssh_initiator.h"
 

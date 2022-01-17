@@ -46,19 +46,18 @@ void SshResponder::HandleNextMessage(int message_size) {
 void SshResponder::ProcessMessage() {
   log_file_ << "Received message with size: " << buffer_.size() << std::endl;
   log_file_ << "Received message: " << buffer_ << std::endl;
-  int version = 0;
-  int request_id = 0;
-  std::string details;
-  scom::ReadMessage(buffer_, version, request_id, details);
-  CHECK(version == kProtocolVersion) << "Unexpected version: " << version;
-  log_file_ << "Read message with version " << version << ", request id "
-            << request_id << " and details: " << std::endl;
-  log_file_ << details << std::endl;
-  ConstructProtobufResponse(version, request_id, details);
+  scom::HeaderReadFields header;
+  scom::ReadMessage(buffer_, header);
+  CHECK(header.version == kProtocolVersion)
+      << "Unexpected version: " << header.version;
+  log_file_ << "Read message with version " << header.version << ", request id "
+            << header.request_id << " and details: " << std::endl;
+  log_file_ << header.payload << std::endl;
+  ConstructProtobufResponse(header.version, header.request_id, header.payload);
   Send(buffer_);
   log_file_ << "Sent pb response with size: " << buffer_.size() << std::endl;
   log_file_ << "Sent pb response: " << buffer_ << std::endl;
-  log_file_ << "Done with request " << request_id << "." << std::endl;
+  log_file_ << "Done with request " << header.request_id << "." << std::endl;
 }
 
 std::string SshResponder::ConstructResponse(
@@ -73,7 +72,11 @@ void SshResponder::ConstructProtobufResponse(
     int request_id,
     const std::string& request_payload) {
   std::string response = ConstructResponse(request_payload);
-  scom::WriteMessage(version, request_id, response, buffer_);
+  scom::HeaderWriteFields header{
+      .version = version,
+      .request_id = request_id,
+      .payload = response};
+  scom::WriteMessage(header, buffer_);
   log_file_ << "Protobuf output: " << buffer_ << std::endl;
 }
 

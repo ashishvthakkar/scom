@@ -17,8 +17,7 @@ int main(int argc, char** argv) {
   SshRequestor requestor(FLAGS_host, FLAGS_user, FLAGS_command);
   for (const auto& request : requests) {
     LOG(INFO) << "Sending request: " << request;
-    // Below is not const auto& and instead relies on RVO
-    auto response = requestor.SendReceive(request);
+    const auto& response = requestor.SendReceive(request);
     LOG(INFO) << "Got response: " << response;
   }
   return 0;
