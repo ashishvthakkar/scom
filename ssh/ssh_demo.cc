@@ -12,7 +12,7 @@ DEFINE_string(                           // NOLINT
 
 int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
-  std::vector<std::string> requests{"5+2", "3*7"};
+  std::vector<std::string> requests{"5 + 2", "3*7"};
 
   scom::SshRequestor requestor(FLAGS_host, FLAGS_user, FLAGS_command);
   for (const auto& request : requests) {
