@@ -25,9 +25,8 @@ int main(int argc, char** argv) {
   auto start = chrono::high_resolution_clock::now();
   for (int i = 0; i < num_repeats; i++) {
     for (const auto& request : requests) {
-      LOG(INFO) << "Sending request: " << request;
       const auto& response = requestor.SendReceive(request);
-      LOG(INFO) << "Got response: " << response;
+      LOG(INFO) << request << " -> " << response;
     }
   }
   auto end = chrono::high_resolution_clock::now();

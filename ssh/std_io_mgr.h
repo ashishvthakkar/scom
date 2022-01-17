@@ -14,6 +14,7 @@ private:
   int Read(void* buffer, int buffer_size);
   int GetNextMessageSize();
 
+  // Note: Logging can be controlled by a config parameter for performance.
   std::ostream& log_file_;
 };
 

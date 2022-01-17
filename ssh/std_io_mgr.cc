@@ -29,7 +29,6 @@ int StdIoMgr::GetNextMessageSize() {
       << "Unexpected size mismatch";
   auto bytes_read = Read(&message_size, sizeof(message_size));
   CHECK(bytes_read == sizeof(message_size)) << "Error reading size";
-  log_file_ << "Read next message size: " << message_size << std::endl;
   return message_size;
 }
 
@@ -39,7 +38,7 @@ int StdIoMgr::Read(void* buffer, int buffer_size) {
   }
   auto bytes_read = std::fread(buffer, 1, buffer_size, stdin);
   CHECK(!std::ferror(stdin)) << "Error reading from stdin";
-  log_file_ << "Read size: " << bytes_read << std::endl;
+  log_file_ << "Read message with size: " << bytes_read << std::endl;
   LOG_ASSERT(bytes_read <= buffer_size)
       << "Potential buffer overflow when reading";
   return bytes_read;
@@ -50,11 +49,10 @@ void StdIoMgr::Send(const std::string& buffer) {
     return;
   }
   int size = buffer.size();
-  log_file_ << "Writing response size: " << buffer << std::endl;
   std::fwrite(&size, sizeof(size), 1, stdout);
-  log_file_ << "Writing response: " << buffer << std::endl;
   std::fwrite(buffer.data(), sizeof(buffer[0]), buffer.size(), stdout);
   std::fflush(stdout);
+  log_file_ << "Sent " << buffer.size() << " bytes." << std::endl;
 }
 
 }  // namespace scom

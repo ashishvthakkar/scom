@@ -87,7 +87,6 @@ void SshInitiator::Receive(std::string &buffer) {
       << "Unexpected size mismatch";
   auto bytes_read =
       ssh_channel_->read(&message_size, sizeof(message_size), kReadTimeoutMs);
-  LOG(INFO) << "Expecting next message of size: " << message_size;
   CHECK(bytes_read == sizeof(message_size)) << "Error reading size";
   buffer.resize(message_size);
   bytes_read = ssh_channel_->read(buffer.data(), buffer.size(), kReadTimeoutMs);

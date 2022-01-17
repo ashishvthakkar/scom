@@ -19,7 +19,6 @@ void SshRequestor::Send(const std::string& message) {
       .request_id = request_id_,
       .payload = message};
   scom::WriteMessage(header, buffer_);
-  LOG(INFO) << "Sending pb request with size: " << buffer_.size();
   request_id_++;
   ssh_initator_.Send(buffer_);
 }
@@ -30,10 +29,6 @@ std::string SshRequestor::ReceiveAsStr() {
   scom::ReadMessage(buffer_, header_read);
   CHECK(header_read.version == kProtocolVersion)
       << "Unexpected version: " << header_read.version;
-  LOG(INFO) << "Read message with version " << header_read.version
-            << ", request id " << header_read.request_id
-            << " and details: " << std::endl;
-  LOG(INFO) << header_read.payload << std::endl;
   return std::move(header_read.payload);
 }
 
