@@ -17,7 +17,7 @@ SshResponder::SshResponder(const std::string& log_file_name) {
 }
 
 int SshResponder::GetNextMessageSize() {
-  int32_t message_size = 0;
+  int message_size = 0;
   LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
       << "Unexpected size mismatch";
   auto bytes_read = Read(&message_size, sizeof(message_size));
@@ -86,7 +86,7 @@ void SshResponder::Send(std::string& output) {
   if (output.empty()) {
     return;
   }
-  int32_t size = output.size();
+  int size = output.size();
   log_file_ << "Writing response size: " << size << std::endl;
   std::fwrite(&size, sizeof(size), 1, stdout);
   log_file_ << "Writing response: " << output << std::endl;
