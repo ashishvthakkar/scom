@@ -11,7 +11,7 @@ namespace scom {
 
 SshResponder::SshResponder(const std::string& log_file_name)
     : log_file_(log_file_name),
-      std_io_mgr_(log_file_) {}
+      std_io_mgr_(log_file_, kEnableResponderLogging) {}
 
 std::string SshResponder::Receive() {
   std_io_mgr_.Receive(buffer_);
@@ -19,8 +19,10 @@ std::string SshResponder::Receive() {
   scom::ReadMessage(buffer_, header);
   CHECK(header.version == kProtocolVersion)
       << "Unexpected version: " << header.version;
-  log_file_ << "Read message with version " << header.version << ", request id "
-            << header.request_id << std::endl;
+  if (kEnableResponderLogging) {
+    log_file_ << "Read message with version " << header.version
+              << ", request id " << header.request_id << std::endl;
+  }
   return std::move(header.payload);
 }
 
@@ -29,7 +31,9 @@ void SshResponder::Send(const std::string& message) {
   const int request_id = -1;
   ConstructProtobufMessage(kProtocolVersion, request_id, message);
   std_io_mgr_.Send(buffer_);
-  log_file_ << "Sent message.";
+  if (kEnableResponderLogging) {
+    log_file_ << "Sent message.";
+  }
 }
 
 void SshResponder::ConstructProtobufMessage(

@@ -14,6 +14,8 @@ static const std::string kResponderCommand =
 static const int kSizeOfMsgLen =
     sizeof(int32_t);  // Message length communicated through int
 
+static const bool kEnableResponderLogging = false;
+
 // Tests related config
 static const std::filesystem::path kTestDataDir =
     R"(${CMAKE_SOURCE_DIR}/test_data)";

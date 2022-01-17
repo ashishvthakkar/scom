@@ -6,7 +6,7 @@
 namespace scom {
 class StdIoMgr {
 public:
-  StdIoMgr(std::ostream& log_file);
+  StdIoMgr(std::ostream& log_file, bool enable_logging);
   void Send(const std::string& buffer);
   void Receive(std::string& buffer);
 
@@ -16,6 +16,7 @@ private:
 
   // Note: Logging can be controlled by a config parameter for performance.
   std::ostream& log_file_;
+  bool enable_logging_;
 };
 
 }  // namespace scom

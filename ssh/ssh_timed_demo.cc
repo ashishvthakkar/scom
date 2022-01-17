@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   std::vector<std::string> requests{"5 + 2", "3*7"};
 
-  const auto num_requests = 10'000;
+  const auto num_requests = 100'000;
   const auto num_repeats = num_requests / requests.size();
 
   scom::SshRequestor requestor(FLAGS_host, FLAGS_user, FLAGS_command);
@@ -26,7 +26,8 @@ int main(int argc, char** argv) {
   for (int i = 0; i < num_repeats; i++) {
     for (const auto& request : requests) {
       const auto& response = requestor.SendReceive(request);
-      LOG(INFO) << request << " -> " << response;
+      // Disable logging during perf run
+      // LOG(INFO) << request << " -> " << response;
     }
   }
   auto end = chrono::high_resolution_clock::now();

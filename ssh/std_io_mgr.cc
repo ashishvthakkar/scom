@@ -7,13 +7,17 @@
 
 namespace scom {
 
-StdIoMgr::StdIoMgr(std::ostream& log_file) : log_file_(log_file) {
+StdIoMgr::StdIoMgr(std::ostream& log_file, bool enable_logging)
+    : log_file_(log_file),
+      enable_logging_(enable_logging) {
   // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-  std::freopen(nullptr, "rb", stdin);
-  CHECK(!std::ferror(stdin)) << "Could not reopen stdin in binary mode";
+  auto* ret = std::freopen(nullptr, "rb", stdin);
+  CHECK(ret != nullptr && !std::ferror(stdin))
+      << "Could not reopen stdin in binary mode";
   // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-  std::freopen(nullptr, "wb", stdout);
-  CHECK(!std::ferror(stdin)) << "Could not reopen stdout in binary mode";
+  ret = std::freopen(nullptr, "wb", stdout);
+  CHECK(ret != nullptr && !std::ferror(stdin))
+      << "Could not reopen stdout in binary mode";
 }
 
 void StdIoMgr::Receive(std::string& buffer) {
@@ -38,7 +42,9 @@ int StdIoMgr::Read(void* buffer, int buffer_size) {
   }
   auto bytes_read = std::fread(buffer, 1, buffer_size, stdin);
   CHECK(!std::ferror(stdin)) << "Error reading from stdin";
-  log_file_ << "Read message with size: " << bytes_read << std::endl;
+  if (enable_logging_) {
+    log_file_ << "Read message with size: " << bytes_read << std::endl;
+  }
   LOG_ASSERT(bytes_read <= buffer_size)
       << "Potential buffer overflow when reading";
   return bytes_read;
@@ -52,7 +58,9 @@ void StdIoMgr::Send(const std::string& buffer) {
   std::fwrite(&size, sizeof(size), 1, stdout);
   std::fwrite(buffer.data(), sizeof(buffer[0]), buffer.size(), stdout);
   std::fflush(stdout);
-  log_file_ << "Sent " << buffer.size() << " bytes." << std::endl;
+  if (enable_logging_) {
+    log_file_ << "Sent " << buffer.size() << " bytes." << std::endl;
+  }
 }
 
 }  // namespace scom

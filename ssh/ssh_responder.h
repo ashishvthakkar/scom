@@ -23,7 +23,7 @@ private:
 
   StdIoMgr std_io_mgr_;
   std::string buffer_;
-  // Note: Logging can be controlled by a config parameter for performance.
+  // Note: Logging controlled by a config parameter kEnableLogging.
   std::ofstream log_file_;
 };
 
