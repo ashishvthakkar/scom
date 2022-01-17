@@ -29,14 +29,6 @@ public:
   std::vector<char> ReceiveAsBuffer();
   std::vector<char> SendReceive(const std::vector<char>& message);
 
-  // Note: Targets
-  // 2. Perf
-  // Timestamps back and forth. Tx per second.
-  // ~1m files in <10 sec> --> 100k calls per sec
-  // 3. Interface
-  // template<typename T, typename U>
-  // const U& Request(const T &request);
-
 private:
   SshInitiator ssh_initator_;
   int request_id_;
