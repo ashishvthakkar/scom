@@ -94,7 +94,6 @@ void SshInitiator::Receive(std::string &buffer) {
   LOG_ASSERT(bytes_read <= buffer.size())
       << "Potential buffer overflow when reading from ssh channel";
   CHECK(bytes_read == message_size) << "Read incomplete message";
-  buffer.resize(bytes_read);
 }
 
 }  // namespace scom
