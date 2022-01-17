@@ -1,8 +1,12 @@
 #include <config.h>
 #include <gflags/gflags.h>
 
+#include <vector>
+
 #include "../protocol/protocol_adapter.h"
 #include "ssh_initiator.h"
+
+namespace scom {
 
 class SshRequestor {
 public:
@@ -11,7 +15,11 @@ public:
       const std::string& user,
       const std::string& command);
 
-  std::string Send(const std::string& request);
+  // NOTE: An optimization is to keep the same buffer internally and only
+  // provide a const reference to the response to the caller. Depending on the
+  // use case, that is likely to be a reasonable interface while providing
+  // performance benefits.
+  std::string SendReceive(const std::string& request);
 
   // Note: Targets
   // 1.
@@ -30,8 +38,9 @@ public:
   // &request);
 
 private:
-  static const int kBufferSize = 1024;
-
   SshInitiator ssh_initator_;
   int request_id_;
+  std::string buffer_;
 };
+
+}  // namespace scom

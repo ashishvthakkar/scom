@@ -9,14 +9,15 @@
 #include <libssh/libsshpp.hpp>
 #include <memory>
 
+namespace scom {
 class SshInitiator {
 public:
   SshInitiator(
       const std::string &host,
       const std::string &username,
       const std::string &remote_command);
-
-  void Send(const std::string &request, std::string &response);
+  void Send(const std::string &buffer);
+  void Receive(std::string &buffer);
 
 private:
   // NOTE: The below class exists only to call init and finalize.
@@ -32,7 +33,7 @@ private:
   void SshAuthenticate();
   void SshExecuteAtRemote(const std::string &remote_command);
 
-  static const int kReadTimeoutMs = -1;  // milliseconds, -1 for indefinite
+  static const int kReadTimeoutMs = 5'000;  // milliseconds, -1 for indefinite
   static const int kSshVerbosity = SSH_LOG_PROTOCOL;
   static const int kSshPort = 22;
   static const int kPasswordSize = 1024;  // TODO(ashish): update
@@ -42,5 +43,7 @@ private:
   // NOTE: We store a unique ptr to ssh::Channel as ssh:Channel cannot be moved
   std::unique_ptr<ssh::Channel> ssh_channel_;
 };
+
+}  // namespace scom
 
 #endif

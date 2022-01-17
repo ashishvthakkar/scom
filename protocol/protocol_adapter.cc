@@ -7,59 +7,52 @@ namespace scom {
 
 void InitProtobuf() { GOOGLE_PROTOBUF_VERIFY_VERSION; }
 
+static scom::Header HeaderFromFields(
+    const HeaderWriteFields &header_write_fields) {
+  scom::Header header;
+  header.set_version(header_write_fields.version);
+  header.set_request_id(header_write_fields.request_id);
+  header.set_payload(header_write_fields.payload);
+  return header;
+}
+
+static void FieldsFromHeader(
+    const scom::Header &header,
+    HeaderReadFields &header_read_fields) {
+  header_read_fields.version = header.version();
+  header_read_fields.request_id = header.request_id();
+  header_read_fields.payload = header.payload();
+}
+
 bool WriteMessage(
-    int version,
-    int request_id,
-    const std::string &message,
+    const HeaderWriteFields &header_write_fields,
     std::ostream &out) {
-  scom::Header header;
-  header.set_version(version);
-  header.set_request_id(request_id);
-  header.set_payload(message);
-  return header.SerializeToOstream(&out);
+  return HeaderFromFields(header_write_fields).SerializeToOstream(&out);
 }
 
 bool WriteMessage(
-    int version,
-    int request_id,
-    const std::string &message,
+    const HeaderWriteFields &header_write_fields,
     std::string &out) {
-  scom::Header header;
-  header.set_version(version);
-  header.set_request_id(request_id);
-  header.set_payload(message);
-  return header.SerializeToString(&out);
+  return HeaderFromFields(header_write_fields).SerializeToString(&out);
 }
 
-bool ReadMessage(
-    std::istream &in,
-    int &version,
-    int &request_id,
-    std::string &payload) {
+bool ReadMessage(std::istream &in, HeaderReadFields &header_read_fields) {
   scom::Header header;
   auto result = header.ParseFromIstream(&in);
   if (!result) {
     return result;
   }
-  version = header.version();
-  payload = header.payload();
-  request_id = header.request_id();
+  FieldsFromHeader(header, header_read_fields);
   return true;
 }
 
-bool ReadMessage(
-    const std::string &in,
-    int &version,
-    int &request_id,
-    std::string &payload) {
+bool ReadMessage(const std::string &in, HeaderReadFields &header_read_fields) {
   scom::Header header;
   auto result = header.ParseFromString(in);
   if (!result) {
     return result;
   }
-  version = header.version();
-  request_id = header.request_id();
-  payload = header.payload();
+  FieldsFromHeader(header, header_read_fields);
   return true;
 }
 
