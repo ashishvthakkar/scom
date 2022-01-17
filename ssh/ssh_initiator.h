@@ -1,13 +1,9 @@
 #ifndef SCOM_SSH_INITIATOR_H_
 #define SCOM_SSH_INITIATOR_H_
 
-#include <glog/logging.h>
-
-#include <array>
-#include <functional>
-#include <iostream>
 #include <libssh/libsshpp.hpp>
 #include <memory>
+#include <string>
 
 namespace scom {
 class SshInitiator {

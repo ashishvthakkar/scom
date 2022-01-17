@@ -3,6 +3,9 @@
 #include <config.h>
 
 #include <cstdio>
+#include <iostream>
+
+#include "../protocol/protocol_adapter.h"
 
 namespace scom {
 

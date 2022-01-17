@@ -1,6 +1,7 @@
 #include "ssh_initiator.h"
 
 #include <config.h>
+#include <glog/logging.h>
 
 namespace scom {
 

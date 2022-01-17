@@ -1,5 +1,9 @@
 #include "ssh_requestor.h"
 
+#include <glog/logging.h>
+
+#include "../protocol/protocol_adapter.h"
+
 namespace scom {
 
 SshRequestor::SshRequestor(

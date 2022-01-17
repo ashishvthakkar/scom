@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "../protocol/protocol_adapter.h"
 #include "ssh_initiator.h"
 
 namespace scom {

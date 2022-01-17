@@ -1,13 +1,10 @@
 #ifndef SCOM_SSH_RESPONDER_H_
 #define SCOM_SSH_RESPONDER_H_
 
-#include <config.h>
 #include <glog/logging.h>
 
 #include <fstream>
-#include <iostream>
 
-#include "../protocol/protocol_adapter.h"
 #include "std_io_mgr.h"
 
 namespace scom {

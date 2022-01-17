@@ -1,5 +1,6 @@
 #include <config.h>
 #include <gflags/gflags.h>
+#include <glog/logging.h>
 
 #include "ssh_requestor.h"
 

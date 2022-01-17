@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include "../expressions/utils.h"
 #include "ssh_responder.h"
 
