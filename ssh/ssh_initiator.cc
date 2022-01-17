@@ -48,7 +48,7 @@ void SshInitiator::SshConnect(
               void *>(&port)));
 
   CHECK_EQ(SSH_OK, ssh_session_.connect());
-  // CHECK(session.isServerKnown());
+  CHECK(ssh_session_.isServerKnown());
 }
 
 void SshInitiator::SshAuthenticate() {
@@ -64,23 +64,30 @@ void SshInitiator::SshAuthenticate() {
 
 void SshInitiator::SshExecuteAtRemote(const std::string &remote_command) {
   ssh_channel_ = std::make_unique<ssh::Channel>(ssh_session_);
-  ssh_channel_->openSession();
-  ssh_channel_->requestExec(remote_command.c_str());
+  CHECK_EQ(SSH_OK, ssh_channel_->openSession());
+  CHECK_EQ(SSH_OK, ssh_channel_->requestExec(remote_command.c_str()));
 }
 
-void SshInitiator::Send(const std::string &request, std::string &response) {
-  LOG_ASSERT(sizeof(int) == kSizeOfMsgLen);  // << "Unexpected size mismatch";
-  int size = request.size();
-  ssh_channel_->write(&size, sizeof(size));
-  ssh_channel_->write(request.data(), request.size());
+// Sends size followed by actual message
+void SshInitiator::Send(const std::string &buffer) {
+  int message_size = buffer.size();
+  LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
+      << "Unexpected size mismatch";
+  ssh_channel_->write(&message_size, sizeof(message_size));
+  ssh_channel_->write(buffer.data(), buffer.size());
+}
 
-  auto bytes_read = ssh_channel_->read(&size, sizeof(size), kReadTimeoutMs);
-  LOG(INFO) << "Read next response size of: " << size;
-  CHECK(bytes_read == sizeof(size)) << "Error reading size";
-  response.resize(size);
-  bytes_read =
-      ssh_channel_->read(response.data(), response.size(), kReadTimeoutMs);
-  CHECK(bytes_read <= response.size())
+void SshInitiator::Receive(std::string &buffer) {
+  int next_message_size = 0;
+  auto bytes_read = ssh_channel_->read(
+      &next_message_size,
+      sizeof(next_message_size),
+      kReadTimeoutMs);
+  LOG(INFO) << "Read next response size of: " << next_message_size;
+  CHECK(bytes_read == sizeof(next_message_size)) << "Error reading size";
+  buffer.resize(next_message_size);
+  bytes_read = ssh_channel_->read(buffer.data(), buffer.size(), kReadTimeoutMs);
+  CHECK(bytes_read <= buffer.size())
       << "Potential buffer overflow when reading from ssh channel";
-  response.resize(bytes_read);
+  buffer.resize(bytes_read);
 }

@@ -12,13 +12,4 @@ int main() {
     ssh_responder.ReadNextMessage(input);
     ssh_responder.ProcessMessage(input);
   }
-  // std::ofstream log_file;
-  // log_file.open(kResponderLog);
-
-  // while (std::cin >> input) {
-  //   log_file << "Received input: " << input;
-  //   const std::string response("Response");
-  //   std::cout << response.size();
-  //   std::cout << response;
-  // }
 }

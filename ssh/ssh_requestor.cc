@@ -7,31 +7,21 @@ SshRequestor::SshRequestor(
     : ssh_initator_(SshInitiator(host, user, command)),
       request_id_(0) {}
 
-std::string SshRequestor::Send(const std::string& request) {
-  // bool SshRequestor::SshResponseHandler(
-  //     const char* buffer,
-  //     int bytes_read,
-  //     ssh::Channel& channel) {
-  //   if (bytes_read > 0) {
-  //     int version = 0;
-  //     int request_id = 0;
-  //     std::string payload;
-  //     scom::ReadMessage(buffer, version, request_id, payload);
-  //     CHECK(version == kProtocolVersion) << "Unexpected version: " <<
-  //     version; LOG(INFO) << "For request " << request_id << ", got payload: "
-  //     << payload;
-  //   }
-  //   if (next_request_id_ >= requests_.size()) {
-  //     return true;  // done
-  //   }
-  LOG(INFO) << "Sending request: " << request;
-  std::string protobuf_request;
-  scom::WriteMessage(kProtocolVersion, request_id_, request, protobuf_request);
-  // protobuf_request.append("\n");
-  LOG(INFO) << "Sending pb request with size: " << protobuf_request.size();
+std::string SshRequestor::SendReceive(const std::string& request) {
+  scom::WriteMessage(kProtocolVersion, request_id_, request, buffer_);
+  LOG(INFO) << "Sending pb request with size: " << buffer_.size();
   request_id_++;
-  std::string protobuf_response;
-  ssh_initator_.Send(protobuf_request, protobuf_response);
+  ssh_initator_.Send(buffer_);
+  ssh_initator_.Receive(buffer_);
+
+  int version = 0;
+  int request_id = 0;
+  std::string details;
+  scom::ReadMessage(buffer_, version, request_id, details);
+  CHECK(version == kProtocolVersion) << "Unexpected version: " << version;
+  LOG(INFO) << "Read message with version " << version << ", request id "
+            << request_id << " and details: " << std::endl;
+  LOG(INFO) << details << std::endl;
   // NOTE: Relying on RVO to optimize the below return
-  return protobuf_response;
+  return details;
 }

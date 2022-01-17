@@ -16,7 +16,8 @@ public:
       const std::string &username,
       const std::string &remote_command);
 
-  void Send(const std::string &request, std::string &response);
+  void Send(const std::string &buffer);
+  void Receive(std::string &buffer);
 
 private:
   // NOTE: The below class exists only to call init and finalize.
