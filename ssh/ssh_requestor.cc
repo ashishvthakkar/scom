@@ -31,4 +31,12 @@ std::string SshRequestor::SendReceive(const std::string& request) {
   return std::move(header_read.payload);
 }
 
+std::vector<char> SshRequestor::SendReceive(const std::vector<char>& request) {
+  std::string request_str(request.begin(), request.end());
+  auto response_payload = SendReceive(request_str);
+  std::vector<char> payload(response_payload.begin(), response_payload.end());
+  // Relying on RVO instead of using std::move
+  return payload;
+}
+
 }  // namespace scom

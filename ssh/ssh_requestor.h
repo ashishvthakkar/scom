@@ -21,6 +21,11 @@ public:
   // performance benefits.
   std::string SendReceive(const std::string& request);
 
+  // As protobuf internally uses std::string instead of std::vector<char>, the
+  // std::string version of this function is more performant than this one for
+  // both text and binary data
+  std::vector<char> SendReceive(const std::vector<char>& request);
+
   // Note: Targets
   // 1.
   // const std::vector<char>& Request(const std::vector<char>& request);

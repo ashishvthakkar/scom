@@ -16,9 +16,19 @@ public:
   SshRequestor ssh_requestor_;                                 // NOLINT
 };
 
-TEST_F(SshTests, BasicConnectionTest) {  // NOLINT
+TEST_F(SshTests, BasicStringTxTest) {  // NOLINT
   const auto& response = ssh_requestor_.SendReceive(requests_[0]);
   LOG(INFO) << "Got response: " << response;
+  EXPECT_LT(0, response.size());
+}
+
+TEST_F(SshTests, BasicVectorTxTest) {  // NOLINT
+  std::vector<char> request{'a', 'b', 'c'};
+  const auto& response = ssh_requestor_.SendReceive(request);
+  LOG(INFO) << "Got response with size: " << response.size();
+  for (const auto& c : response) {
+    LOG(INFO) << c;
+  }
   EXPECT_LT(0, response.size());
 }
 
