@@ -9,6 +9,7 @@
 #include <libssh/libsshpp.hpp>
 #include <memory>
 
+namespace scom {
 class SshInitiator {
 public:
   SshInitiator(
@@ -42,5 +43,7 @@ private:
   // NOTE: We store a unique ptr to ssh::Channel as ssh:Channel cannot be moved
   std::unique_ptr<ssh::Channel> ssh_channel_;
 };
+
+}  // namespace scom
 
 #endif

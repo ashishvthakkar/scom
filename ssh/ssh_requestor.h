@@ -6,6 +6,8 @@
 #include "../protocol/protocol_adapter.h"
 #include "ssh_initiator.h"
 
+namespace scom {
+
 class SshRequestor {
 public:
   explicit SshRequestor(
@@ -40,3 +42,5 @@ private:
   int request_id_;
   std::string buffer_;
 };
+
+}  // namespace scom

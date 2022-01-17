@@ -1,5 +1,7 @@
 #include "ssh_requestor.h"
 
+namespace scom {
+
 SshRequestor::SshRequestor(
     const std::string& host,
     const std::string& user,
@@ -28,3 +30,5 @@ std::string SshRequestor::SendReceive(const std::string& request) {
   LOG(INFO) << header_read.payload << std::endl;
   return std::move(header_read.payload);
 }
+
+}  // namespace scom

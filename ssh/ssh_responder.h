@@ -9,6 +9,8 @@
 
 #include "../protocol/protocol_adapter.h"
 
+namespace scom {
+
 class SshResponder {
 public:
   explicit SshResponder(const std::string& log_file_name);
@@ -28,5 +30,7 @@ private:
   std::string buffer_;
   std::ofstream log_file_;
 };
+
+}  // namespace scom
 
 #endif

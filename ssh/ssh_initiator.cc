@@ -2,6 +2,8 @@
 
 #include <config.h>
 
+namespace scom {
+
 SshInitiator::SshEnvMgr::SshEnvMgr() {
   CHECK_EQ(SSH_OK, ssh_init()) << "Could not initiatlize ssh lib";
 }
@@ -93,3 +95,5 @@ void SshInitiator::Receive(std::string &buffer) {
   CHECK(bytes_read == message_size) << "Read incomplete message";
   buffer.resize(bytes_read);
 }
+
+}  // namespace scom

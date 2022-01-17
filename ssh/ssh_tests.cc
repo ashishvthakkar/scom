@@ -7,6 +7,7 @@
 
 #include "ssh_requestor.h"
 
+namespace scom {
 class SshTests : public ::testing::Test {
 public:
   SshTests() : ssh_requestor_(kSshTestHost, kSshTestUser, kResponderCommand) {}
@@ -20,3 +21,5 @@ TEST_F(SshTests, BasicConnectionTest) {  // NOLINT
   LOG(INFO) << "Got response: " << response;
   EXPECT_LT(0, response.size());
 }
+
+}  // namespace scom

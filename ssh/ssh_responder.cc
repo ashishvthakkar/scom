@@ -4,6 +4,8 @@
 
 #include <cstdio>
 
+namespace scom {
+
 SshResponder::SshResponder(const std::string& log_file_name) {
   log_file_.open(log_file_name);
   // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
@@ -91,3 +93,5 @@ void SshResponder::Send(std::string& output) {
   std::fwrite(output.data(), sizeof(output[0]), output.size(), stdout);
   std::fflush(stdout);
 }
+
+}  // namespace scom
