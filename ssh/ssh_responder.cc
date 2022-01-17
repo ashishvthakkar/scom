@@ -43,18 +43,6 @@ void SshResponder::HandleNextMessage(int message_size) {
   ProcessMessage();
 }
 
-void SshResponder::Send(std::string& output) {
-  if (output.empty()) {
-    return;
-  }
-  int32_t size = output.size();
-  log_file_ << "Writing response size: " << size << std::endl;
-  std::fwrite(&size, sizeof(size), 1, stdout);
-  log_file_ << "Writing response: " << output << std::endl;
-  std::fwrite(output.data(), sizeof(output[0]), output.size(), stdout);
-  std::fflush(stdout);
-}
-
 void SshResponder::ProcessMessage() {
   log_file_ << "Received message with size: " << buffer_.size() << std::endl;
   log_file_ << "Received message: " << buffer_ << std::endl;
@@ -87,4 +75,16 @@ void SshResponder::ConstructProtobufResponse(
   std::string response = ConstructResponse(request_payload);
   scom::WriteMessage(version, request_id, response, buffer_);
   log_file_ << "Protobuf output: " << buffer_ << std::endl;
+}
+
+void SshResponder::Send(std::string& output) {
+  if (output.empty()) {
+    return;
+  }
+  int32_t size = output.size();
+  log_file_ << "Writing response size: " << size << std::endl;
+  std::fwrite(&size, sizeof(size), 1, stdout);
+  log_file_ << "Writing response: " << output << std::endl;
+  std::fwrite(output.data(), sizeof(output[0]), output.size(), stdout);
+  std::fflush(stdout);
 }
