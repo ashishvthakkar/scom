@@ -15,7 +15,6 @@ public:
       const std::string &host,
       const std::string &username,
       const std::string &remote_command);
-
   void Send(const std::string &buffer);
   void Receive(std::string &buffer);
 

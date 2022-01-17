@@ -12,7 +12,7 @@ static const std::string kResponderCommand =
     R"(${CMAKE_SOURCE_DIR}/build/ssh/ssh_responder)";
 
 static const int kSizeOfMsgLen =
-    sizeof(int);  // Message length communicated through int
+    sizeof(int32_t);  // Message length communicated through int
 
 // Tests related config
 static const std::filesystem::path kTestDataDir =

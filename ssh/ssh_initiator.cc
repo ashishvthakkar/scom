@@ -70,24 +70,26 @@ void SshInitiator::SshExecuteAtRemote(const std::string &remote_command) {
 
 // Sends size followed by actual message
 void SshInitiator::Send(const std::string &buffer) {
-  int message_size = buffer.size();
+  int32_t message_size = buffer.size();
   LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
       << "Unexpected size mismatch";
   ssh_channel_->write(&message_size, sizeof(message_size));
   ssh_channel_->write(buffer.data(), buffer.size());
 }
 
+// Receives size followed by actual message
 void SshInitiator::Receive(std::string &buffer) {
-  int next_message_size = 0;
-  auto bytes_read = ssh_channel_->read(
-      &next_message_size,
-      sizeof(next_message_size),
-      kReadTimeoutMs);
-  LOG(INFO) << "Read next response size of: " << next_message_size;
-  CHECK(bytes_read == sizeof(next_message_size)) << "Error reading size";
-  buffer.resize(next_message_size);
+  int32_t message_size = 0;
+  LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
+      << "Unexpected size mismatch";
+  auto bytes_read =
+      ssh_channel_->read(&message_size, sizeof(message_size), kReadTimeoutMs);
+  LOG(INFO) << "Expecting next message of size: " << message_size;
+  CHECK(bytes_read == sizeof(message_size)) << "Error reading size";
+  buffer.resize(message_size);
   bytes_read = ssh_channel_->read(buffer.data(), buffer.size(), kReadTimeoutMs);
-  CHECK(bytes_read <= buffer.size())
+  LOG_ASSERT(bytes_read <= buffer.size())
       << "Potential buffer overflow when reading from ssh channel";
+  CHECK(bytes_read == message_size) << "Read incomplete message";
   buffer.resize(bytes_read);
 }

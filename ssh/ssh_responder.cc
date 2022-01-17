@@ -5,11 +5,7 @@
 #include <cstdio>
 
 SshResponder::SshResponder(const std::string& log_file_name) {
-  // NOTE: No std::ios_base::app is used
   log_file_.open(log_file_name);
-  // std::string expression("5+2");
-  // log_file_ << expression
-  //           << " computes to: " << code_experiments::Compute(expression);
   // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
   std::freopen(nullptr, "rb", stdin);
   CHECK(!std::ferror(stdin)) << "Could not reopen stdin in binary mode";
@@ -18,35 +14,40 @@ SshResponder::SshResponder(const std::string& log_file_name) {
   CHECK(!std::ferror(stdin)) << "Could not reopen stdout in binary mode";
 }
 
-int SshResponder::ReadNextMessageSize() {
-  std::string buffer;
-  buffer.resize(kSizeOfMsgLen);
-  LOG_ASSERT(sizeof(int) == kSizeOfMsgLen) << "Unexpected size mismatch";
-  auto bytes_read = ReadNextMessage(buffer);
-  CHECK(bytes_read == kSizeOfMsgLen);
-  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-  int next_message_size = *(reinterpret_cast<int*>(buffer.data()));
-  CHECK(bytes_read == sizeof(next_message_size)) << "Error reading size";
-  log_file_ << "Read next message size: " << next_message_size << std::endl;
-  return next_message_size;
+int SshResponder::GetNextMessageSize() {
+  int32_t message_size = 0;
+  LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
+      << "Unexpected size mismatch";
+  auto bytes_read = Read(&message_size, sizeof(message_size));
+  CHECK(bytes_read == sizeof(message_size)) << "Error reading size";
+  log_file_ << "Read next message size: " << message_size << std::endl;
+  return message_size;
 }
 
-int SshResponder::ReadNextMessage(std::string& buffer) {
-  if (buffer.empty()) {
+int SshResponder::Read(void* buffer, int buffer_size) {
+  if (buffer_size <= 0) {
     return 0;
   }
-  auto bytes_read =
-      std::fread(buffer.data(), sizeof(buffer[0]), buffer.size(), stdin);
+  auto bytes_read = std::fread(buffer, 1, buffer_size, stdin);
   CHECK(!std::ferror(stdin)) << "Error reading from stdin";
-  log_file_ << "Read message with size: " << bytes_read << std::endl;
+  log_file_ << "Read size: " << bytes_read << std::endl;
+  LOG_ASSERT(bytes_read <= buffer_size)
+      << "Potential buffer overflow when reading";
   return bytes_read;
 }
 
-void SshResponder::WriteOutputMessage(std::string& output) {
+void SshResponder::HandleNextMessage(int message_size) {
+  buffer_.resize(message_size);
+  auto bytes_read = Read(buffer_.data(), buffer_.size());
+  CHECK(bytes_read == message_size) << "Read incomplete message";
+  ProcessMessage();
+}
+
+void SshResponder::Send(std::string& output) {
   if (output.empty()) {
     return;
   }
-  int size = output.size();
+  int32_t size = output.size();
   log_file_ << "Writing response size: " << size << std::endl;
   std::fwrite(&size, sizeof(size), 1, stdout);
   log_file_ << "Writing response: " << output << std::endl;
@@ -54,24 +55,21 @@ void SshResponder::WriteOutputMessage(std::string& output) {
   std::fflush(stdout);
 }
 
-void SshResponder::ProcessMessage(const std::string& input) {
-  log_file_ << "Received message with size: " << input.size() << std::endl;
-  log_file_ << "Received message: " << input << std::endl;
+void SshResponder::ProcessMessage() {
+  log_file_ << "Received message with size: " << buffer_.size() << std::endl;
+  log_file_ << "Received message: " << buffer_ << std::endl;
   int version = 0;
   int request_id = 0;
   std::string details;
-  scom::ReadMessage(input, version, request_id, details);
+  scom::ReadMessage(buffer_, version, request_id, details);
   CHECK(version == kProtocolVersion) << "Unexpected version: " << version;
   log_file_ << "Read message with version " << version << ", request id "
             << request_id << " and details: " << std::endl;
   log_file_ << details << std::endl;
-  auto protobuf_response =
-      ConstructProtobufResponse(version, request_id, details);
-  WriteOutputMessage(protobuf_response);
-  // std::cout << protobuf_response;
-  log_file_ << "Sent pb response with size: " << protobuf_response.size()
-            << std::endl;
-  log_file_ << "Sent pb response: " << protobuf_response << std::endl;
+  ConstructProtobufResponse(version, request_id, details);
+  Send(buffer_);
+  log_file_ << "Sent pb response with size: " << buffer_.size() << std::endl;
+  log_file_ << "Sent pb response: " << buffer_ << std::endl;
   log_file_ << "Done with request " << request_id << "." << std::endl;
 }
 
@@ -82,13 +80,11 @@ std::string SshResponder::ConstructResponse(
   return response;
 }
 
-std::string SshResponder::ConstructProtobufResponse(
+void SshResponder::ConstructProtobufResponse(
     int version,
     int request_id,
     const std::string& request_payload) {
   std::string response = ConstructResponse(request_payload);
-  std::string protobuf_response;
-  scom::WriteMessage(version, request_id, response, protobuf_response);
-  log_file_ << "Protobuf output: " << protobuf_response << std::endl;
-  return protobuf_response;
+  scom::WriteMessage(version, request_id, response, buffer_);
+  log_file_ << "Protobuf output: " << buffer_ << std::endl;
 }

@@ -12,19 +12,20 @@
 class SshResponder {
 public:
   explicit SshResponder(const std::string& log_file_name);
-  void ProcessMessage(const std::string& input);
-  int ReadNextMessageSize();
-  int ReadNextMessage(std::string& buffer);
-  void WriteOutputMessage(std::string& output);
+  int GetNextMessageSize();
+  void HandleNextMessage(int message_size);
 
 private:
+  int Read(void* buffer, int buffer_size);
+  void ProcessMessage();
   std::string ConstructResponse(const std::string& request_payload);
-
-  std::string ConstructProtobufResponse(
+  void ConstructProtobufResponse(
       int version,
       int request_id,
       const std::string& request_payload);
+  void Send(std::string& output);
 
+  std::string buffer_;
   std::ofstream log_file_;
 };
 
