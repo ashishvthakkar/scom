@@ -89,10 +89,22 @@ void SshInitiator::Receive(std::string &buffer) {
       ssh_channel_->read(&message_size, sizeof(message_size), kReadTimeoutMs);
   CHECK(bytes_read == sizeof(message_size)) << "Error reading size";
   buffer.resize(message_size);
-  bytes_read = ssh_channel_->read(buffer.data(), buffer.size(), kReadTimeoutMs);
-  LOG_ASSERT(bytes_read <= buffer.size())
+  auto total_bytes_read = 0;
+  while (total_bytes_read < message_size) {
+    bytes_read = ssh_channel_->read(
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        buffer.data() + total_bytes_read,
+        buffer.size() - total_bytes_read,
+        kReadTimeoutMs);
+    total_bytes_read += bytes_read;
+    if (bytes_read == 0) {
+      LOG(ERROR) << "Unexpected read of 0 bytes.";
+      break;
+    }
+  }
+  LOG_ASSERT(total_bytes_read <= buffer.size())
       << "Potential buffer overflow when reading from ssh channel";
-  CHECK(bytes_read == message_size) << "Read incomplete message";
+  CHECK(total_bytes_read == message_size) << "Read incomplete message";
 }
 
 }  // namespace scom

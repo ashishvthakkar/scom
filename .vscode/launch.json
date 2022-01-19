@@ -67,6 +67,39 @@
       ]
     },
     {
+      "name": "(gdb) Launch ssh_timed_bw_demo",
+      "type": "cppdbg",
+      "request": "launch",
+      // Alternative would ve have this resolved by CMake Tools:
+      "program": "/home/ashish/git/scom/build/ssh/ssh_timed_bw_demo",
+      "args": [
+        "-host=localhost",
+        "-user=ashish",
+        "-command=/home/ashish/git/scom/build/ssh/ssh_echo_responder",
+        "-num_requests=10000",
+        "-request_size=4096"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          // add the directory where our target was built to the PATHs
+          // it gets resolved by CMake Tools:
+          "name": "PATH",
+          "value": "$PATH:${command:cmake.getLaunchTargetDirectory}"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
       "name": "(gdb) Launch protocol tests",
       "type": "cppdbg",
       "request": "launch",

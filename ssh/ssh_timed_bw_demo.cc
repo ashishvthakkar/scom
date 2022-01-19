@@ -32,11 +32,14 @@ int main(int argc, char** argv) {
   }
 
   auto end = chrono::high_resolution_clock::now();
-  LOG(INFO) << "Completing total requests with size "
-            << (request_size * num_requests)
-            << " and receive responses with the same total size "
-            << chrono::duration_cast<chrono::seconds>(end - start).count()
-            << " seconds.";
+
+  const auto to_mega = 1024 * 1024;
+  auto seconds = chrono::duration_cast<chrono::seconds>(end - start).count();
+  auto size = request_size * num_requests / to_mega;
+  LOG(INFO) << "Completing total requests with size " << size
+            << "Megabytes and received responses with the same total size in "
+            << seconds << " seconds for a bandwidth of " << size / seconds
+            << "MB/s.";
 
   return 0;
 }
