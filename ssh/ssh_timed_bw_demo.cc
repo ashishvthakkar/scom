@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   auto seconds = chrono::duration_cast<chrono::seconds>(end - start).count();
   auto size = request_size * num_requests / to_mega;
   LOG(INFO) << "Completing total requests with size " << size
-            << "Megabytes and received responses with the same total size in "
+            << " MB and received responses with the same total size in "
             << seconds << " seconds for a bandwidth of " << size / seconds
             << "MB/s.";
 
