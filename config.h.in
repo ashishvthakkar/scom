@@ -8,9 +8,6 @@ static constexpr int kProtocolVersion = 3;
 static const std::string kResponderLog =
     R"(${CMAKE_SOURCE_DIR}/build/responder_log.txt)";
 
-static const std::string kResponderCommand =
-    R"(${CMAKE_SOURCE_DIR}/build/ssh/ssh_responder)";
-
 static const int kSizeOfMsgLen =
     sizeof(int32_t);  // Message length communicated through int
 
@@ -22,5 +19,8 @@ static const std::filesystem::path kTestDataDir =
 
 static const std::string kSshTestHost = "localhost";
 static const std::string kSshTestUser = R"($ENV{USER})";
+
+static const std::string kResponderCommand =
+    R"(${CMAKE_SOURCE_DIR}/build/ssh/apps/ssh_responder)";
 
 #endif
