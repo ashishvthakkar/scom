@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-#include "ssh_requestor.h"
+#include "../ssh_requestor.h"
 
 DEFINE_string(host, "", "[localhost]");  // NOLINT
 DEFINE_string(user, "", "[username]");   // NOLINT
