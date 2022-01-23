@@ -17,6 +17,8 @@ private:
   // Note: Logging can be controlled by a config parameter for performance.
   std::ostream& log_file_;
   bool enable_logging_;
+  FILE* in;
+  FILE* out;
 };
 
 }  // namespace scom

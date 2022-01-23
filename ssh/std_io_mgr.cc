@@ -11,13 +11,13 @@ StdIoMgr::StdIoMgr(std::ostream& log_file, bool enable_logging)
     : log_file_(log_file),
       enable_logging_(enable_logging) {
   // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-  auto* ret = std::freopen(nullptr, "rb", stdin);
-  CHECK(ret != nullptr && !std::ferror(stdin))
-      << "Could not reopen stdin in binary mode";
+  in = std::freopen(nullptr, "rb", stdin);
+  CHECK(in != nullptr && !std::ferror(in))
+      << "Could not reopen input resource in binary mode";
   // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-  ret = std::freopen(nullptr, "wb", stdout);
-  CHECK(ret != nullptr && !std::ferror(stdin))
-      << "Could not reopen stdout in binary mode";
+  out = std::freopen(nullptr, "wb", stdout);
+  CHECK(out != nullptr && !std::ferror(out))
+      << "Could not reopen output resource in binary mode";
 }
 
 void StdIoMgr::Receive(std::string& buffer) {
@@ -40,8 +40,8 @@ int StdIoMgr::Read(void* buffer, int buffer_size) {
   if (buffer_size <= 0) {
     return 0;
   }
-  auto bytes_read = std::fread(buffer, 1, buffer_size, stdin);
-  CHECK(!std::ferror(stdin)) << "Error reading from stdin";
+  auto bytes_read = std::fread(buffer, 1, buffer_size, in);
+  CHECK(!std::ferror(in)) << "Error reading from input";
   if (enable_logging_) {
     log_file_ << "Read message with size: " << bytes_read << std::endl;
   }
@@ -55,9 +55,9 @@ void StdIoMgr::Send(const std::string& buffer) {
     return;
   }
   int size = buffer.size();
-  std::fwrite(&size, sizeof(size), 1, stdout);
-  std::fwrite(buffer.data(), sizeof(buffer[0]), buffer.size(), stdout);
-  std::fflush(stdout);
+  std::fwrite(&size, sizeof(size), 1, out);
+  std::fwrite(buffer.data(), sizeof(buffer[0]), buffer.size(), out);
+  std::fflush(out);
   if (enable_logging_) {
     log_file_ << "Sent " << buffer.size() << " bytes." << std::endl;
   }
