@@ -12,8 +12,8 @@ DEFINE_string(                           // NOLINT
     command,
     "",
     "[/home/ashish/git/scom/build/ssh/ssh_echo_responder]");
-DEFINE_int32(num_requests, 10000, "[number of requests]");   // NOLINT
-DEFINE_int32(request_size, 4000, "[size of each request]");  // NOLINT
+DEFINE_int64(num_requests, 10000, "[number of requests]");   // NOLINT
+DEFINE_int64(request_size, 4000, "[size of each request]");  // NOLINT
 
 int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 
   const auto to_mega = 1024 * 1024;
   auto seconds = chrono::duration_cast<chrono::seconds>(end - start).count();
-  auto size = request_size * num_requests / to_mega;
+  auto size = (request_size * num_requests) / to_mega;
   LOG(INFO) << "Completing total requests with size " << size
             << " MB and received responses with the same total size in "
             << seconds << " seconds for a bandwidth of " << size / seconds
