@@ -1,17 +1,21 @@
 #include <config.h>
 #include <expressions/utils.h>
 
-#include "../ssh_responder.h"
+#include <fstream>
+
+#include "../std_io_mgr.h"
 
 int main() {
-  scom::SshResponder ssh_responder(kResponderLog);
+  std::ofstream log_file(kResponderLog);
+  scom::StdIoMgr io_mgr(log_file, false);
+  std::string message;
   while (true) {
-    std::string in = ssh_responder.Receive();
-    if (in.empty()) {
+    io_mgr.Receive(message);
+    if (message.empty()) {
       break;
     }
     // Echo back the request
-    ssh_responder.Send(in);
+    io_mgr.Send(message);
   }
   return 0;
 }

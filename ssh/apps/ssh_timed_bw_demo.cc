@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-#include "../ssh_requestor.h"
+#include "../ssh_initiator.h"
 
 DEFINE_string(host, "", "[localhost]");  // NOLINT
 DEFINE_string(user, "", "[username]");   // NOLINT
@@ -19,14 +19,14 @@ int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   const auto request_size = FLAGS_request_size;
   const auto num_requests = FLAGS_num_requests;
-  std::string request(request_size, 'a');
-  LOG(INFO) << "Sending each request with size: " << request.size();
-  scom::SshRequestor requestor(FLAGS_host, FLAGS_user, FLAGS_command);
+  std::string message(request_size, 'a');
+  LOG(INFO) << "Sending each request with size: " << message.size();
+  scom::SshInitiator initiator(FLAGS_host, FLAGS_user, FLAGS_command);
   namespace chrono = std::chrono;
   auto start = chrono::high_resolution_clock::now();
   for (auto i = 0; i < num_requests; i++) {
-    requestor.Send(request);
-    const auto& response = requestor.Receive();
+    initiator.Send(message);
+    initiator.Receive(message);
     // Disable logging during perf run
     // LOG(INFO) << "Got response with size: " << response.size();
     // LOG(INFO) << "Got response: " << response;

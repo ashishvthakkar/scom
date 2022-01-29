@@ -10,7 +10,7 @@ SshRequestor::SshRequestor(
     const std::string& host,
     const std::string& user,
     const std::string& command)
-    : ssh_initator_(SshInitiator(host, user, command)) {}
+    : ssh_initator_(host, user, command) {}
 
 void SshRequestor::Send(const std::string& message) {
   msg_io_mgr_.Send(message, ssh_initator_);
