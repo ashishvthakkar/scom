@@ -26,6 +26,6 @@ target_link_libraries(ssh_tests
         PRIVATE GTest::gtest_main)
 target_include_directories(ssh_tests
         PRIVATE ${CMAKE_BINARY_DIR}/include)        
-# Note: This is not automatically enabled as tests as it requires password for 
-# ssh auth
-# gtest_discover_tests(ssh_tests)
+# Note: If public key auth is not enabled, these tests will require password 
+# entry.
+gtest_discover_tests(ssh_tests)
