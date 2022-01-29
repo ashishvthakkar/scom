@@ -5,6 +5,7 @@
 
 #include <fstream>
 
+#include "msg_io_mgr.h"
 #include "std_io_mgr.h"
 
 namespace scom {
@@ -22,7 +23,7 @@ private:
       const std::string& payload);
 
   StdIoMgr std_io_mgr_;
-  std::string buffer_;
+  MsgIoMgr<StdIoMgr> msg_io_mgr_;
   // Note: Logging controlled by a config parameter kEnableLogging.
   std::ofstream log_file_;
 };

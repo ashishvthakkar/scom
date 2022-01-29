@@ -10,26 +10,14 @@ SshRequestor::SshRequestor(
     const std::string& host,
     const std::string& user,
     const std::string& command)
-    : ssh_initator_(SshInitiator(host, user, command)),
-      request_id_(0) {}
+    : ssh_initator_(SshInitiator(host, user, command)) {}
 
 void SshRequestor::Send(const std::string& message) {
-  scom::HeaderWriteFields header{
-      .version = kProtocolVersion,
-      .request_id = request_id_,
-      .payload = message};
-  scom::WriteMessage(header, buffer_);
-  request_id_++;
-  ssh_initator_.Send(buffer_);
+  msg_io_mgr_.Send(message, ssh_initator_);
 }
 
 std::string SshRequestor::Receive() {
-  ssh_initator_.Receive(buffer_);
-  scom::HeaderReadFields header_read;
-  scom::ReadMessage(buffer_, header_read);
-  CHECK(header_read.version == kProtocolVersion)
-      << "Unexpected version: " << header_read.version;
-  return std::move(header_read.payload);
+  return std::move(msg_io_mgr_.Receive(ssh_initator_));
 }
 
 std::string SshRequestor::SendReceive(const std::string& message) {

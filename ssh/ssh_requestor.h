@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "msg_io_mgr.h"
 #include "ssh_initiator.h"
 
 namespace scom {
@@ -24,7 +25,7 @@ public:
 
 private:
   SshInitiator ssh_initator_;
-  int request_id_;
+  MsgIoMgr<SshInitiator> msg_io_mgr_;
   std::string buffer_;
 };
 
