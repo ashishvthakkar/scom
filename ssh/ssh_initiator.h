@@ -9,11 +9,11 @@ namespace scom {
 class SshInitiator {
 public:
   SshInitiator(
-      const std::string &host,
-      const std::string &username,
-      const std::string &remote_command);
-  void Send(const std::string &buffer);
-  void Receive(std::string &buffer);
+      const std::string& host,
+      const std::string& username,
+      const std::string& remote_command);
+  void Send(const std::string& buffer);
+  void Receive(std::string& buffer);
 
 private:
   // NOTE: The below class exists only to call init and finalize.
@@ -25,9 +25,9 @@ private:
     ~SshEnvMgr();
   };
 
-  void SshConnect(const std::string &host, const std::string &username);
+  void SshConnect(const std::string& host, const std::string& username);
   void SshAuthenticate();
-  void SshExecuteAtRemote(const std::string &remote_command);
+  void SshExecuteAtRemote(const std::string& remote_command);
 
   static const int kReadTimeoutMs = 5'000;  // milliseconds, -1 for indefinite
   static const int kSshVerbosity = SSH_LOG_PROTOCOL;
