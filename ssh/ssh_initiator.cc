@@ -79,16 +79,19 @@ void SshInitiator::SshExecuteAtRemote(const std::string &remote_command) {
 
 // Sends size followed by actual message
 void SshInitiator::Send(const std::string &buffer) {
-  int message_size = buffer.size();
+  int32_t message_size = buffer.size();
   LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
       << "Unexpected size mismatch";
+  CHECK(buffer.size() <= std::numeric_limits<int32_t>::max())
+      << "Message size of " << buffer.size() << " too large to be sent with "
+      << sizeof(message_size) << "bytes";
   ssh_channel_->write(&message_size, sizeof(message_size));
   ssh_channel_->write(buffer.data(), buffer.size());
 }
 
 // Receives size followed by actual message
 void SshInitiator::Receive(std::string &buffer) {
-  int message_size = 0;
+  int32_t message_size = 0;
   LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
       << "Unexpected size mismatch";
   auto bytes_read =

@@ -21,14 +21,14 @@ StdIoMgr::StdIoMgr(std::ostream& log_file, bool enable_logging)
 }
 
 void StdIoMgr::Receive(std::string& buffer) {
-  int message_size = GetNextMessageSize();
+  int32_t message_size = GetNextMessageSize();
   buffer.resize(message_size);
   auto bytes_read = Read(buffer.data(), buffer.size());
   CHECK(bytes_read == message_size) << "Read incomplete message";
 }
 
-int StdIoMgr::GetNextMessageSize() {
-  int message_size = 0;
+int32_t StdIoMgr::GetNextMessageSize() {
+  int32_t message_size = 0;
   LOG_ASSERT(sizeof(message_size) == kSizeOfMsgLen)
       << "Unexpected size mismatch";
   auto bytes_read = Read(&message_size, sizeof(message_size));
@@ -54,7 +54,10 @@ void StdIoMgr::Send(const std::string& buffer) {
   if (buffer.empty()) {
     return;
   }
-  int size = buffer.size();
+  int32_t size = buffer.size();
+  CHECK(buffer.size() <= std::numeric_limits<int32_t>::max())
+      << "Message size of " << buffer.size() << " too large to be sent with "
+      << sizeof(size) << "bytes";
   std::fwrite(&size, sizeof(size), 1, out);
   std::fwrite(buffer.data(), sizeof(buffer[0]), buffer.size(), out);
   std::fflush(out);

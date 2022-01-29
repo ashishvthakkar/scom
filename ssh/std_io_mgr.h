@@ -12,7 +12,7 @@ public:
 
 private:
   int Read(void* buffer, int buffer_size);
-  int GetNextMessageSize();
+  int32_t GetNextMessageSize();
 
   // Note: Logging can be controlled by a config parameter for performance.
   std::ostream& log_file_;
