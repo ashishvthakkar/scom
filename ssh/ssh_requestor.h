@@ -19,15 +19,8 @@ public:
   // use case, that is likely to be a reasonable interface while providing
   // performance benefits.
   void Send(const std::string& message);
-  std::string ReceiveAsStr();
+  std::string Receive();
   std::string SendReceive(const std::string& message);
-
-  // As protobuf internally uses std::string instead of std::vector<char>, the
-  // std::string version of this function is more performant than this one for
-  // both text and binary data
-  void Send(const std::vector<char>& message);
-  std::vector<char> ReceiveAsBuffer();
-  std::vector<char> SendReceive(const std::vector<char>& message);
 
 private:
   SshInitiator ssh_initator_;

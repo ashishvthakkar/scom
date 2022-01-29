@@ -22,16 +22,6 @@ TEST_F(SshTests, BasicStringTxTest) {  // NOLINT
   EXPECT_LT(0, response.size());
 }
 
-TEST_F(SshTests, BasicVectorTxTest) {  // NOLINT
-  std::vector<char> request{'1', '+', '2'};
-  const auto& response = ssh_requestor_.SendReceive(request);
-  LOG(INFO) << "Got response with size: " << response.size();
-  for (const auto& c : response) {
-    LOG(INFO) << c;
-  }
-  EXPECT_LT(0, response.size());
-}
-
 TEST_F(SshTests, SimpleExpressionEval) {  // NOLINT
   std::map<std::string, int> expression_to_value = {
       {"5+2", 7},       // NOLINT(cppcoreguidelines-avoid-magic-numbers)

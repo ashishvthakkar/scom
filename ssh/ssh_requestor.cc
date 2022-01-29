@@ -23,7 +23,7 @@ void SshRequestor::Send(const std::string& message) {
   ssh_initator_.Send(buffer_);
 }
 
-std::string SshRequestor::ReceiveAsStr() {
+std::string SshRequestor::Receive() {
   ssh_initator_.Receive(buffer_);
   scom::HeaderReadFields header_read;
   scom::ReadMessage(buffer_, header_read);
@@ -34,24 +34,7 @@ std::string SshRequestor::ReceiveAsStr() {
 
 std::string SshRequestor::SendReceive(const std::string& message) {
   Send(message);
-  return ReceiveAsStr();
-}
-
-void SshRequestor::Send(const std::vector<char>& message) {
-  std::string request_str(message.begin(), message.end());
-  Send(request_str);
-}
-
-std::vector<char> SshRequestor::ReceiveAsBuffer() {
-  auto response_payload = ReceiveAsStr();
-  std::vector<char> payload(response_payload.begin(), response_payload.end());
-  // Relying on RVO instead of using std::move
-  return payload;
-}
-
-std::vector<char> SshRequestor::SendReceive(const std::vector<char>& message) {
-  Send(message);
-  return ReceiveAsBuffer();
+  return Receive();
 }
 
 }  // namespace scom
