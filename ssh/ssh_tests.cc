@@ -2,6 +2,7 @@
 #include <glog/logging.h>
 #include <gtest/gtest.h>
 
+#include <chrono>
 #include <string>
 #include <vector>
 
@@ -38,6 +39,38 @@ TEST_F(SshTests, SimpleExpressionEval) {  // NOLINT
         LOG(INFO) << "Got response: " << response;
         EXPECT_EQ(0, response.compare(std::to_string(element.second)));
       });
+}
+
+TEST_F(SshTests, BandwidthPerfTest) {  // NOLINT
+  SshRequestor ssh_echo_requestor(
+      kSshTestHost,
+      kSshTestUser,
+      kEchoResponderCommand);
+  const int64_t num_requests = 5000;
+  const int64_t request_size = 100000;
+  const int max_seconds = 10;
+  const int min_bandwidth_mbps = 150;
+
+  namespace chrono = std::chrono;
+  std::string message(request_size, '1');
+  auto start = chrono::high_resolution_clock::now();
+  for (auto i = 0; i < num_requests; i++) {
+    ssh_echo_requestor.Send(message);
+    ssh_echo_requestor.Receive();
+  }
+  auto end = chrono::high_resolution_clock::now();
+
+  const auto to_mega = 1024 * 1024;
+  auto seconds = chrono::duration_cast<chrono::seconds>(end - start).count();
+  auto size = (request_size * num_requests) / to_mega;
+  auto bandwidth = size / seconds;
+  LOG(INFO) << "Completing total requests with size " << size
+            << " MB and received responses with the same total size in "
+            << seconds << " seconds for a bandwidth of " << bandwidth
+            << "MB/s.";
+
+  EXPECT_LE(seconds, max_seconds);
+  EXPECT_GE(bandwidth, min_bandwidth_mbps);
 }
 
 }  // namespace scom

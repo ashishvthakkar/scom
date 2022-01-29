@@ -28,4 +28,7 @@ static const std::string kSshTestUser = R"($ENV{USER})";
 static const std::string kResponderCommand =
     R"(${CMAKE_SOURCE_DIR}/build/ssh/apps/ssh_responder)";
 
+static const std::string kEchoResponderCommand =
+    R"(${CMAKE_SOURCE_DIR}/build/ssh/apps/ssh_echo_responder)";
+
 #endif
