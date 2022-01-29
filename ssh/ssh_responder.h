@@ -13,8 +13,11 @@ namespace scom {
 class SshResponder {
 public:
   explicit SshResponder(const std::string& log_file_name);
-  std::string Receive();
+
+  void Send(const std::string& message, const int request_id);
   void Send(const std::string& message);
+  std::string Receive(int& request_id);
+  std::string Receive();
 
 private:
   void ConstructProtobufMessage(

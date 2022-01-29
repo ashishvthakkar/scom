@@ -10,8 +10,8 @@ namespace scom {
 template <typename T>
 class MsgIoMgr {
 public:
-  void Send(const std::string& message, T& io_mgr);
-  std::string Receive(T& io_mgr);
+  void Send(const std::string& message, const int request_id, T& io_mgr);
+  std::string Receive(T& io_mgr, int& request_id);
 
 private:
   void ConstructProtobufMessage(

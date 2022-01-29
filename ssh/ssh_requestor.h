@@ -19,7 +19,9 @@ public:
   // provide a const reference to the response to the caller. Depending on the
   // use case, that is likely to be a reasonable interface while providing
   // performance benefits.
+  void Send(const std::string& message, const int request_id);
   void Send(const std::string& message);
+  std::string Receive(int& request_id);
   std::string Receive();
 
 private:

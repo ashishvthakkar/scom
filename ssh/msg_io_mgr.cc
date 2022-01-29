@@ -24,20 +24,22 @@ void MsgIoMgr<T>::ConstructProtobufMessage(
 }
 
 template <typename T>
-void MsgIoMgr<T>::Send(const std::string& message, T& io_mgr) {
-  // NOTE: The request_id is currently a placeholder only
-  const int request_id = -1;
+void MsgIoMgr<T>::Send(
+    const std::string& message,
+    const int request_id,
+    T& io_mgr) {
   ConstructProtobufMessage(kProtocolVersion, request_id, message);
   io_mgr.Send(buffer_);
 }
 
 template <typename T>
-std::string MsgIoMgr<T>::Receive(T& io_mgr) {
+std::string MsgIoMgr<T>::Receive(T& io_mgr, int& request_id) {
   io_mgr.Receive(buffer_);
   scom::HeaderReadFields header;
   scom::ReadMessage(buffer_, header);
   CHECK(header.version == kProtocolVersion)
       << "Unexpected version: " << header.version;
+  request_id = header.request_id;
   return std::move(header.payload);
 }
 

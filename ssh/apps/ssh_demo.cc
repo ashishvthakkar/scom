@@ -16,11 +16,16 @@ int main(int argc, char** argv) {
   std::vector<std::string> requests{"5 + 2", "3*7"};
 
   scom::SshRequestor requestor(FLAGS_host, FLAGS_user, FLAGS_command);
+  int request_id = 0;
+  int for_request_id = 0;
   for (const auto& request : requests) {
-    LOG(INFO) << "Sending request: " << request;
-    requestor.Send(request);
-    const auto& response = requestor.Receive();
-    LOG(INFO) << "Got response: " << response;
+    LOG(INFO) << "Sending request: " << request << " with request id "
+              << request_id;
+    requestor.Send(request, request_id);
+    request_id++;
+    const auto& response = requestor.Receive(for_request_id);
+    LOG(INFO) << "Got response: " << response << " for request id "
+              << for_request_id;
   }
   return 0;
 }
