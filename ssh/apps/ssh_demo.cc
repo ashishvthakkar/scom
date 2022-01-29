@@ -18,7 +18,8 @@ int main(int argc, char** argv) {
   scom::SshRequestor requestor(FLAGS_host, FLAGS_user, FLAGS_command);
   for (const auto& request : requests) {
     LOG(INFO) << "Sending request: " << request;
-    const auto& response = requestor.SendReceive(request);
+    requestor.Send(request);
+    const auto& response = requestor.Receive();
     LOG(INFO) << "Got response: " << response;
   }
   return 0;

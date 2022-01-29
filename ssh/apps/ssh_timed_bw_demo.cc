@@ -25,7 +25,8 @@ int main(int argc, char** argv) {
   namespace chrono = std::chrono;
   auto start = chrono::high_resolution_clock::now();
   for (auto i = 0; i < num_requests; i++) {
-    const auto& response = requestor.SendReceive(request);
+    requestor.Send(request);
+    const auto& response = requestor.Receive();
     // Disable logging during perf run
     // LOG(INFO) << "Got response with size: " << response.size();
     // LOG(INFO) << "Got response: " << response;

@@ -17,7 +17,8 @@ public:
 };
 
 TEST_F(SshTests, BasicStringTxTest) {  // NOLINT
-  const auto& response = ssh_requestor_.SendReceive(requests_[0]);
+  ssh_requestor_.Send(requests_[0]);
+  const auto& response = ssh_requestor_.Receive();
   LOG(INFO) << "Got response: " << response;
   EXPECT_LT(0, response.size());
 }
@@ -32,7 +33,8 @@ TEST_F(SshTests, SimpleExpressionEval) {  // NOLINT
       expression_to_value.begin(),
       expression_to_value.end(),
       [this](const std::pair<std::string, int>& element) {
-        const auto& response = ssh_requestor_.SendReceive(element.first);
+        ssh_requestor_.Send(element.first);
+        const auto& response = ssh_requestor_.Receive();
         LOG(INFO) << "Got response: " << response;
         EXPECT_EQ(0, response.compare(std::to_string(element.second)));
       });

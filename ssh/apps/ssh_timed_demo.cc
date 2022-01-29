@@ -26,7 +26,8 @@ int main(int argc, char** argv) {
   auto start = chrono::high_resolution_clock::now();
   for (auto i = 0; i < num_repeats; i++) {
     for (const auto& request : requests) {
-      const auto& response = requestor.SendReceive(request);
+      requestor.Send(request);
+      const auto& response = requestor.Receive();
       // Disable logging during perf run
       // LOG(INFO) << request << " -> " << response;
     }

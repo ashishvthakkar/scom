@@ -21,7 +21,6 @@ public:
   // performance benefits.
   void Send(const std::string& message);
   std::string Receive();
-  std::string SendReceive(const std::string& message);
 
 private:
   SshInitiator ssh_initator_;

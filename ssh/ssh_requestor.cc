@@ -20,9 +20,4 @@ std::string SshRequestor::Receive() {
   return std::move(msg_io_mgr_.Receive(ssh_initator_));
 }
 
-std::string SshRequestor::SendReceive(const std::string& message) {
-  Send(message);
-  return Receive();
-}
-
 }  // namespace scom
