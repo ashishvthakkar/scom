@@ -21,7 +21,11 @@ int main(int argc, char** argv) {
   const auto num_requests = FLAGS_num_requests;
   std::string message(request_size, 'a');
   LOG(INFO) << "Sending each request with size: " << message.size();
-  scom::SshInitiator initiator(FLAGS_host, FLAGS_user, FLAGS_command);
+  scom::SshInitiator initiator(
+      FLAGS_host,
+      FLAGS_user,
+      FLAGS_command,
+      kUsePublicKeyAuth);
   namespace chrono = std::chrono;
   auto start = chrono::high_resolution_clock::now();
   for (auto i = 0; i < num_requests; i++) {

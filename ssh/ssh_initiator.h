@@ -11,7 +11,8 @@ public:
   SshInitiator(
       const std::string& host,
       const std::string& username,
-      const std::string& remote_command);
+      const std::string& remote_command,
+      const bool public_key_auth);
   void Send(const std::string& buffer);
   void Receive(std::string& buffer);
 
@@ -36,6 +37,7 @@ private:
 
   SshEnvMgr ssh_env_mgr_;
   ssh::Session ssh_session_;
+  bool public_key_auth_;
   // NOTE: We store a unique ptr to ssh::Channel as ssh:Channel cannot be moved
   std::unique_ptr<ssh::Channel> ssh_channel_;
 };

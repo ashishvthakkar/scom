@@ -16,8 +16,10 @@ SshInitiator::SshEnvMgr::~SshEnvMgr() {
 SshInitiator::SshInitiator(
     const std::string &host,
     const std::string &username,
-    const std::string &remote_command)
-    : ssh_env_mgr_(),  // NOLINT(readability-redundant-member-init)
+    const std::string &remote_command,
+    const bool public_key_auth)
+    : public_key_auth_(public_key_auth),
+      ssh_env_mgr_(),  // NOLINT(readability-redundant-member-init)
       ssh_session_(    // NOLINT(readability-redundant-member-init)
           ssh::Session()) {
   SshConnect(host, username);
@@ -55,14 +57,18 @@ void SshInitiator::SshConnect(
 }
 
 void SshInitiator::SshAuthenticate() {
-  auto password = std::array<char, kPasswordSize>();
-  CHECK(!ssh_getpass(
-      "password: ",
-      password.data(),
-      password.size(),
-      false,
-      false));
-  CHECK_EQ(SSH_AUTH_SUCCESS, ssh_session_.userauthPassword(password.data()));
+  if (public_key_auth_) {
+    CHECK_EQ(SSH_AUTH_SUCCESS, ssh_session_.userauthPublickeyAuto());
+  } else {
+    auto password = std::array<char, kPasswordSize>();
+    CHECK(!ssh_getpass(
+        "password: ",
+        password.data(),
+        password.size(),
+        false,
+        false));
+    CHECK_EQ(SSH_AUTH_SUCCESS, ssh_session_.userauthPassword(password.data()));
+  }
 }
 
 void SshInitiator::SshExecuteAtRemote(const std::string &remote_command) {
