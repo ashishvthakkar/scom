@@ -27,7 +27,6 @@ public:
 private:
   SshInitiator ssh_initator_;
   MsgIoMgr<SshInitiator> msg_io_mgr_;
-  std::string buffer_;
 };
 
 }  // namespace scom
